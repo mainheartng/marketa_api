@@ -2,9 +2,9 @@ syntax = "proto3";
 
 package auth;
 
-option go_package="github.com/inidaname/mosque_location/protos";
+option go_package = "github.com/mainheartng/marketa_api/protos;protos";
 
-import "types.proto";
+import "protos/types.proto";
 
 service AuthService {
   rpc RegisterUser (RegisterUserRequest) returns (RegisterUserResponse);

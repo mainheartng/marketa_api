@@ -2,8 +2,10 @@ syntax = "proto3";
 
 package organization;
 
+option go_package = "github.com/mainheartng/marketa_api/protos;protos";
+
 import "protos/types.proto";
-import "google/protobuf/timestamp.proto";
+// import "google/protobuf/timestamp.proto";
 
 service OrganizationService {
   rpc CreateOrganization(CreateOrganizationRequest) returns (CreateOrganizationResponse);
@@ -15,16 +17,16 @@ service OrganizationService {
   rpc GetUserOrganizations(GetUserOrganizationsRequest) returns (GetUserOrganizationsResponse);
 }
 
-message Organization {
-  string organization_id = 1;
-  string tenant_id = 2;
-  string name = 3;
-  string description = 4;
-  types.Status status = 5;
-  OrganizationSettings settings = 6;
-  google.protobuf.Timestamp created_at = 7;
-  google.protobuf.Timestamp updated_at = 8;
-}
+// message Organization {
+//   string organization_id = 1;
+//   string tenant_id = 2;
+//   string name = 3;
+//   string description = 4;
+//   types.Status status = 5;
+//   OrganizationSettings settings = 6;
+//   google.protobuf.Timestamp created_at = 7;
+//   google.protobuf.Timestamp updated_at = 8;
+// }
 
 message OrganizationSettings {
   bool allow_multi_membership = 1;
@@ -40,7 +42,7 @@ message CreateOrganizationRequest {
 }
 
 message CreateOrganizationResponse {
-  Organization organization = 1;
+  types.Organization organization = 1;
   bool success = 2;
   string message = 3;
 }
@@ -51,7 +53,7 @@ message GetOrganizationRequest {
 }
 
 message GetOrganizationResponse {
-  Organization organization = 1;
+  types.Organization organization = 1;
   bool success = 2;
   string message = 3;
 }
@@ -65,7 +67,7 @@ message UpdateOrganizationRequest {
 }
 
 message UpdateOrganizationResponse {
-  Organization organization = 1;
+  types.Organization organization = 1;
   bool success = 2;
   string message = 3;
 }
@@ -78,7 +80,7 @@ message ListOrganizationsRequest {
 }
 
 message ListOrganizationsResponse {
-  repeated Organization organizations = 1;
+  repeated types.Organization organizations = 1;
   types.PageResponse pagination = 2;
   bool success = 3;
   string message = 4;
@@ -113,7 +115,7 @@ message GetUserOrganizationsRequest {
 }
 
 message GetUserOrganizationsResponse {
-  repeated Organization organizations = 1;
+  repeated types.Organization organizations = 1;
   bool success = 2;
   string message = 3;
 }

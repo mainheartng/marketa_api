@@ -1,7 +1,7 @@
 syntax = "proto3";
 package user;
-option go_package="github.com/inidaname/mosque_location/protos";
-import "types.proto";
+option go_package = "github.com/mainheartng/marketa_api/protos;protos";
+import "protos/types.proto";
 
 service UserService {
   rpc GetUserByID (GetUserByIDRequest) returns (GetUserByIDResponse);

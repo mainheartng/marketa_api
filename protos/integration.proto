@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package integration;
 
+option go_package = "github.com/mainheartng/marketa_api/protos;protos";
+
 import "protos/types.proto";
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/struct.proto";

@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package health;
 
+option go_package = "github.com/mainheartng/marketa_api/protos;protos";
+
 service HealthService {
   rpc Check(HealthCheckRequest) returns (HealthCheckResponse);
   rpc Watch(HealthCheckRequest) returns (stream HealthCheckResponse);

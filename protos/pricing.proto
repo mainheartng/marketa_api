@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package pricing;
 
+option go_package = "github.com/mainheartng/marketa_api/protos;protos";
+
 import "protos/types.proto";
 import "google/protobuf/timestamp.proto";
 
@@ -110,7 +112,7 @@ message AppliedPriceRule {
   PriceRuleType type = 4;
 }
 
-message OrderItem {
+message OrderedItem {
   string product_id = 1;
   int32 quantity = 2;
   double unit_price = 3;
@@ -164,7 +166,7 @@ message TaxRuleCondition {
   map<string, string> custom_conditions = 5;
 }
 
-message Address {
+message Addressed {
   string country = 1;
   string state = 2;
   string city = 3;
@@ -190,11 +192,11 @@ message GetPriceResponse {
 
 message CalculateOrderTotalRequest {
   types.TenantContext tenant_context = 1;
-  repeated OrderItem items = 2;
+  repeated OrderedItem items = 2;
   string customer_id = 3;
   string discount_code = 4;
-  Address shipping_address = 5;
-  Address billing_address = 6;
+  Addressed shipping_address = 5;
+  Addressed billing_address = 6;
   double shipping_cost = 7;
 }
 
@@ -276,7 +278,7 @@ message ValidateDiscountRequest {
   types.TenantContext tenant_context = 1;
   string discount_code = 2;
   string customer_id = 3;
-  repeated OrderItem items = 4;
+  repeated OrderedItem items = 4;
   double order_amount = 5;
 }
 
@@ -292,9 +294,9 @@ message ValidateDiscountResponse {
 // Tax Service Request/Response Messages
 message CalculateTaxRequest {
   types.TenantContext tenant_context = 1;
-  repeated OrderItem items = 2;
-  Address shipping_address = 3;
-  Address billing_address = 4;
+  repeated OrderedItem items = 2;
+  Addressed shipping_address = 3;
+  Addressed billing_address = 4;
   string customer_type = 5;
   string vat_number = 6;
 }
