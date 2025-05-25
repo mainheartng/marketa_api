@@ -1,0 +1,314 @@
+syntax = "proto3";
+
+package product;
+
+import "protos/types.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/struct.proto";
+
+service ProductService {
+  rpc CreateProduct(CreateProductRequest) returns (CreateProductResponse);
+  rpc GetProduct(GetProductRequest) returns (GetProductResponse);
+  rpc UpdateProduct(UpdateProductRequest) returns (UpdateProductResponse);
+  rpc ListProducts(ListProductsRequest) returns (ListProductsResponse);
+  rpc SearchProducts(SearchProductsRequest) returns (SearchProductsResponse);
+  rpc CreateCategory(CreateCategoryRequest) returns (CreateCategoryResponse);
+  rpc ListCategories(ListCategoriesRequest) returns (ListCategoriesResponse);
+}
+
+message Product {
+  string product_id = 1;
+  types.TenantContext tenant_context = 2;
+  string sku = 3;
+  string name = 4;
+  string description = 5;
+  repeated string category_ids = 6;
+  ProductPricing pricing = 7;
+  ProductInventory inventory = 8;
+  repeated ProductVariant variants = 9;
+  repeated ProductImage images = 10;
+  map<string, string> attributes = 11;
+  types.Status status = 12;
+  google.protobuf.Timestamp created_at = 13;
+  google.protobuf.Timestamp updated_at = 14;
+}
+
+message ProductPricing {
+  double base_price = 1;
+  double sale_price = 2;
+  string currency = 3;
+  google.protobuf.Timestamp sale_start = 4;
+  google.protobuf.Timestamp sale_end = 5;
+}
+
+message ProductInventory {
+  int32 stock_quantity = 1;
+  int32 reserved_quantity = 2;
+  bool track_inventory = 3;
+  bool allow_backorder = 4;
+}
+
+message ProductVariant {
+  string variant_id = 1;
+  string sku = 2;
+  map<string, string> attributes = 3;
+  ProductPricing pricing = 4;
+  ProductInventory inventory = 5;
+}
+
+message ProductImage {
+  string image_id = 1;
+  string url = 2;
+  string alt_text = 3;
+  int32 sort_order = 4;
+}
+
+message Category {
+  string category_id = 1;
+  types.TenantContext tenant_context = 2;
+  string name = 3;
+  string description = 4;
+  string parent_category_id = 5;
+  string slug = 6;
+  int32 sort_order = 7;
+  types.Status status = 8;
+}
+
+message CreateProductRequest {
+  types.TenantContext tenant_context = 1;
+  Product product = 2;
+}
+
+message CreateProductResponse {
+  Product product = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message SearchProductsRequest {
+  types.TenantContext tenant_context = 1;
+  SearchQuery query = 2;
+}
+
+message SearchProductsResponse {
+  SearchResult results = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message GetProductRequest {
+  types.TenantContext tenant_context = 1;
+  string product_id = 2;
+}
+
+message GetProductResponse {
+  Product product = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message UpdateProductRequest {
+  types.TenantContext tenant_context = 1;
+  string product_id = 2;
+  Product product = 3;
+}
+
+message UpdateProductResponse {
+  Product product = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message ListProductsRequest {
+  types.TenantContext tenant_context = 1;
+  types.PageRequest pagination = 2;
+  repeated string category_ids = 3;
+  types.Status status_filter = 4;
+  string search_query = 5;
+}
+
+message ListProductsResponse {
+  repeated Product products = 1;
+  types.PageResponse pagination = 2;
+  bool success = 3;
+  string message = 4;
+}
+
+message CreateCategoryRequest {
+  types.TenantContext tenant_context = 1;
+  Category category = 2;
+}
+
+message CreateCategoryResponse {
+  Category category = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message ListCategoriesRequest {
+  types.TenantContext tenant_context = 1;
+  types.PageRequest pagination = 2;
+  string parent_category_id = 3;
+  types.Status status_filter = 4;
+}
+
+message ListCategoriesResponse {
+  repeated Category categories = 1;
+  types.PageResponse pagination = 2;
+  bool success = 3;
+  string message = 4;
+}
+
+
+service SearchService {
+  rpc SearchProducts(SearchProductsRequest) returns (SearchProductsResponse);
+  rpc SearchCustomers(SearchCustomersRequest) returns (SearchCustomersResponse);
+  rpc SearchOrders(SearchOrdersRequest) returns (SearchOrdersResponse);
+  rpc CreateSearchIndex(CreateSearchIndexRequest) returns (CreateSearchIndexResponse);
+  rpc UpdateSearchIndex(UpdateSearchIndexRequest) returns (UpdateSearchIndexResponse);
+  rpc GetSearchSuggestions(GetSearchSuggestionsRequest) returns (GetSearchSuggestionsResponse);
+}
+
+// Common search structures
+message SearchQuery {
+  string query = 1;
+  repeated SearchFilter filters = 2;
+  SearchSort sort = 3;
+  types.PageRequest pagination = 4;
+  repeated string facets = 5;
+}
+
+message SearchFilter {
+  string field = 1;
+  string operator = 2; // eq, ne, gt, lt, gte, lte, in, contains
+  repeated string values = 3;
+}
+
+message SearchSort {
+  string field = 1;
+  string order = 2; // asc, desc
+}
+
+message SearchResult {
+  repeated SearchHit hits = 1;
+  int32 total_count = 2;
+  repeated SearchFacet facets = 3;
+  map<string, string> metadata = 4;
+}
+
+message SearchHit {
+  string id = 1;
+  double score = 2;
+  google.protobuf.Struct source = 3;
+  map<string, string> highlights = 4;
+}
+
+message SearchFacet {
+  string name = 1;
+  repeated SearchFacetValue values = 2;
+}
+
+message SearchFacetValue {
+  string value = 1;
+  int32 count = 2;
+}
+
+
+// Customer search messages
+message SearchCustomersRequest {
+  SearchQuery search_query = 1;
+  bool include_inactive = 2;
+  repeated string customer_segments = 3;
+}
+
+message SearchCustomersResponse {
+  SearchResult result = 1;
+  double search_time_ms = 2;
+}
+
+// Order search messages
+message SearchOrdersRequest {
+  SearchQuery search_query = 1;
+  repeated string statuses = 2;
+  string date_range_start = 3;
+  string date_range_end = 4;
+  bool include_cancelled = 5;
+}
+
+message SearchOrdersResponse {
+  SearchResult result = 1;
+  OrderSearchStats stats = 2;
+  double search_time_ms = 3;
+}
+
+message OrderSearchStats {
+  double total_value = 1;
+  int32 total_items = 2;
+  double average_order_value = 3;
+}
+
+// Index management messages
+message CreateSearchIndexRequest {
+  string index_name = 1;
+  IndexConfiguration config = 2;
+  map<string, string> settings = 3;
+}
+
+message CreateSearchIndexResponse {
+  string index_id = 1;
+  string status = 2;
+  string created_at = 3;
+}
+
+message UpdateSearchIndexRequest {
+  string index_name = 1;
+  IndexConfiguration config = 2;
+  bool force_rebuild = 3;
+}
+
+message UpdateSearchIndexResponse {
+  string index_id = 1;
+  string status = 2;
+  string updated_at = 3;
+  int32 documents_reindexed = 4;
+}
+
+message IndexConfiguration {
+  repeated IndexField fields = 1;
+  IndexSettings settings = 2;
+}
+
+message IndexField {
+  string name = 1;
+  string type = 2; // text, keyword, integer, float, boolean, date
+  bool searchable = 3;
+  bool facetable = 4;
+  bool sortable = 5;
+  double boost = 6;
+}
+
+message IndexSettings {
+  int32 number_of_shards = 1;
+  int32 number_of_replicas = 2;
+  map<string, string> analyzers = 3;
+}
+
+// Search suggestions messages
+message GetSearchSuggestionsRequest {
+  string partial_query = 1;
+  string suggestion_type = 2; // completion, correction, related
+  int32 max_suggestions = 3;
+  repeated string contexts = 4; // products, customers, orders
+}
+
+message GetSearchSuggestionsResponse {
+  repeated SearchSuggestion suggestions = 1;
+  double response_time_ms = 2;
+}
+
+message SearchSuggestion {
+  string text = 1;
+  double score = 2;
+  string type = 3;
+  map<string, string> metadata = 4;
+}

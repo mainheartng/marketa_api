@@ -1,0 +1,177 @@
+syntax = "proto3";
+
+package logistic;
+
+import "protos/types.proto";
+import "google/protobuf/timestamp.proto";
+
+service LogisticsService {
+  rpc GetShippingRates(GetShippingRatesRequest) returns (GetShippingRatesResponse);
+  rpc CreateShipment(CreateShipmentRequest) returns (CreateShipmentResponse);
+  rpc TrackShipment(TrackShipmentRequest) returns (TrackShipmentResponse);
+  rpc UpdateShipmentStatus(UpdateShipmentStatusRequest) returns (UpdateShipmentStatusResponse);
+  rpc ListShipments(ListShipmentsRequest) returns (ListShipmentsResponse);
+  rpc ConfigureLogisticsProvider(ConfigureLogisticsProviderRequest) returns (ConfigureLogisticsProviderResponse);
+  rpc CreateReturnLabel(CreateReturnLabelRequest) returns (CreateReturnLabelResponse);
+}
+
+enum ShipmentStatus {
+  SHIPMENT_STATUS_UNSPECIFIED = 0;
+  SHIPMENT_STATUS_CREATED = 1;
+  SHIPMENT_STATUS_PICKED_UP = 2;
+  SHIPMENT_STATUS_IN_TRANSIT = 3;
+  SHIPMENT_STATUS_OUT_FOR_DELIVERY = 4;
+  SHIPMENT_STATUS_DELIVERED = 5;
+  SHIPMENT_STATUS_FAILED_DELIVERY = 6;
+  SHIPMENT_STATUS_RETURNED = 7;
+}
+
+message ShippingRate {
+  string rate_id = 1;
+  string carrier = 2;
+  string service_type = 3;
+  double cost = 4;
+  string currency = 5;
+  int32 estimated_days = 6;
+  map<string, string> metadata = 7;
+}
+
+message Shipment {
+  string shipment_id = 1;
+  types.TenantContext tenant_context = 2;
+  string order_id = 3;
+  string carrier = 4;
+  string tracking_number = 5;
+  ShipmentStatus status = 6;
+  types.Address from_address = 7;
+  types.Address to_address = 8;
+  repeated ShipmentItem items = 9;
+  ShipmentDimensions dimensions = 10;
+  double weight = 11;
+  double cost = 12;
+  string label_url = 13;
+  repeated TrackingEvent tracking_events = 14;
+  google.protobuf.Timestamp created_at = 15;
+  google.protobuf.Timestamp estimated_delivery = 16;
+  google.protobuf.Timestamp delivered_at = 17;
+}
+
+message ShipmentItem {
+  string product_id = 1;
+  string variant_id = 2;
+  int32 quantity = 3;
+  string description = 4;
+  double value = 5;
+}
+
+message ShipmentDimensions {
+  double length = 1;
+  double width = 2;
+  double height = 3;
+  string unit = 4; // cm, in
+}
+
+message TrackingEvent {
+  string status = 1;
+  string description = 2;
+  string location = 3;
+  google.protobuf.Timestamp timestamp = 4;
+}
+
+message LogisticsProvider {
+  string provider_id = 1;
+  string name = 2;
+  repeated string supported_services = 3;
+  map<string, string> configuration = 4;
+  bool is_active = 5;
+}
+
+message GetShippingRatesRequest {
+  types.TenantContext tenant_context = 1;
+  types.Address from_address = 2;
+  types.Address to_address = 3;
+  repeated ShipmentItem items = 4;
+  ShipmentDimensions dimensions = 5;
+  double weight = 6;
+}
+
+message GetShippingRatesResponse {
+  repeated ShippingRate rates = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message CreateShipmentRequest {
+  types.TenantContext tenant_context = 1;
+  Shipment shipment = 2;
+}
+
+message CreateShipmentResponse {
+  Shipment shipment = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message TrackShipmentRequest {
+  types.TenantContext tenant_context = 1;
+  string shipment_id = 2;
+}
+
+message TrackShipmentResponse {
+  Shipment shipment = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message UpdateShipmentStatusRequest {
+  types.TenantContext tenant_context = 1;
+  string shipment_id = 2;
+  ShipmentStatus status = 3;
+  string location = 4;
+  string notes = 5;
+}
+
+message UpdateShipmentStatusResponse {
+  Shipment shipment = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message ListShipmentsRequest {
+  types.TenantContext tenant_context = 1;
+  types.PageRequest pagination = 2;
+  string order_id = 3;
+  ShipmentStatus status_filter = 4;
+  string carrier = 5;
+}
+
+message ListShipmentsResponse {
+  repeated Shipment shipments = 1;
+  types.PageResponse pagination = 2;
+  bool success = 3;
+  string message = 4;
+}
+
+message ConfigureLogisticsProviderRequest {
+  types.TenantContext tenant_context = 1;
+  LogisticsProvider provider = 2;
+}
+
+message ConfigureLogisticsProviderResponse {
+  LogisticsProvider provider = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message CreateReturnLabelRequest {
+  types.TenantContext tenant_context = 1;
+  string shipment_id = 2;
+  string reason = 3;
+}
+
+message CreateReturnLabelResponse {
+  string label_url = 1;
+  string tracking_number = 2;
+  bool success = 3;
+  string message = 4;
+}

@@ -1,0 +1,88 @@
+syntax = "proto3";
+
+package auth;
+
+option go_package="github.com/inidaname/mosque_location/protos";
+
+import "types.proto";
+
+service AuthService {
+  rpc RegisterUser (RegisterUserRequest) returns (RegisterUserResponse);
+  rpc LoginUser (LoginUserRequest) returns (LoginUserResponse);
+  rpc ForgotPassword (ForgotPasswordRequest) returns (ForgotPasswordResponse);
+  rpc ValidatePasswordToken (ValidatePasswordTokenRequest) returns (ValidatePasswordTokenResponse);
+  rpc RequestPasswordChange (RequestPasswordChangeRequest) returns (RequestPasswordChangeResponse);
+  rpc ChangePassword (ChangePasswordRequest) returns (ChangePasswordResponse);
+  rpc LogoutUser (LogoutUserRequest) returns (LogoutUserResponse);
+}
+
+message RegisterUserRequest {
+  string email = 1;
+  string password = 2;
+  optional string phone = 3;
+  string full_name = 4;
+}
+
+message RegisterUserResponse {
+  types.User user = 1;
+}
+
+message ForgotPasswordRequest {
+  string email = 1;
+}
+
+message ForgotPasswordResponse {
+  string token = 1;
+  bool success = 2;
+}
+
+message ValidatePasswordTokenRequest {
+  string token = 1;
+}
+
+message ValidatePasswordTokenResponse {
+  bool success = 1;
+  string message = 2;
+  string token_id = 3;
+}
+
+message LoginUserRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message LoginUserResponse {
+  string message = 1;
+  bool success = 2;
+}
+
+message RequestPasswordChangeRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message RequestPasswordChangeResponse {
+  string message = 1;
+  bool success = 2;
+}
+
+message LogoutUserRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message LogoutUserResponse {
+  string message = 1;
+  bool success = 2;
+}
+
+message ChangePasswordResponse {
+  string message = 1;
+  bool success = 2;
+}
+
+message ChangePasswordRequest {
+  string email = 1;
+  string old_password = 2;
+  string new_password = 3;
+}

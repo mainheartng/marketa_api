@@ -1,0 +1,775 @@
+syntax = "proto3";
+
+package configuration;
+
+import "protos/types.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/struct.proto";
+
+service AuditService {
+  rpc LogEvent(LogEventRequest) returns (LogEventResponse);
+  rpc GetAuditLog(GetAuditLogRequest) returns (GetAuditLogResponse);
+  rpc ListAuditLogs(ListAuditLogsRequest) returns (ListAuditLogsResponse);
+  rpc CreateAuditReport(CreateAuditReportRequest) returns (CreateAuditReportResponse);
+  rpc GetAuditStatistics(GetAuditStatisticsRequest) returns (GetAuditStatisticsResponse);
+  rpc ExportAuditLogs(ExportAuditLogsRequest) returns (ExportAuditLogsResponse);
+}
+
+service ConfigurationService {
+  rpc GetConfig(GetConfigRequest) returns (GetConfigResponse);
+  rpc UpdateConfig(UpdateConfigRequest) returns (UpdateConfigResponse);
+  rpc ListConfigs(ListConfigsRequest) returns (ListConfigsResponse);
+  rpc ResetConfig(ResetConfigRequest) returns (ResetConfigResponse);
+  rpc GetConfigHistory(GetConfigHistoryRequest) returns (GetConfigHistoryResponse);
+  rpc ValidateConfig(ValidateConfigRequest) returns (ValidateConfigResponse);
+  rpc BackupConfigs(BackupConfigsRequest) returns (BackupConfigsResponse);
+  rpc RestoreConfigs(RestoreConfigsRequest) returns (RestoreConfigsResponse);
+}
+
+service WebhookService {
+  rpc CreateWebhook(CreateWebhookRequest) returns (CreateWebhookResponse);
+  rpc GetWebhook(GetWebhookRequest) returns (GetWebhookResponse);
+  rpc UpdateWebhook(UpdateWebhookRequest) returns (UpdateWebhookResponse);
+  rpc ListWebhooks(ListWebhooksRequest) returns (ListWebhooksResponse);
+  rpc DeleteWebhook(DeleteWebhookRequest) returns (DeleteWebhookResponse);
+  rpc TestWebhook(TestWebhookRequest) returns (TestWebhookResponse);
+  rpc GetWebhookDeliveries(GetWebhookDeliveriesRequest) returns (GetWebhookDeliveriesResponse);
+  rpc ResendWebhook(ResendWebhookRequest) returns (ResendWebhookResponse);
+  rpc GetWebhookStats(GetWebhookStatsRequest) returns (GetWebhookStatsResponse);
+  rpc PauseWebhook(PauseWebhookRequest) returns (PauseWebhookResponse);
+  rpc ResumeWebhook(ResumeWebhookRequest) returns (ResumeWebhookResponse);
+}
+
+service FileStorageService {
+  rpc UploadFile(UploadFileRequest) returns (UploadFileResponse);
+  rpc GetFile(GetFileRequest) returns (GetFileResponse);
+  rpc DeleteFile(DeleteFileRequest) returns (DeleteFileResponse);
+  rpc ListFiles(ListFilesRequest) returns (ListFilesResponse);
+  rpc GetUploadUrl(GetUploadUrlRequest) returns (GetUploadUrlResponse);
+  rpc GetDownloadUrl(GetDownloadUrlRequest) returns (GetDownloadUrlResponse);
+  rpc MoveFile(MoveFileRequest) returns (MoveFileResponse);
+  rpc CopyFile(CopyFileRequest) returns (CopyFileResponse);
+  rpc GetStorageQuota(GetStorageQuotaRequest) returns (GetStorageQuotaResponse);
+}
+
+enum AuditEventType {
+  AUDIT_EVENT_TYPE_UNSPECIFIED = 0;
+  AUDIT_EVENT_TYPE_CREATE = 1;
+  AUDIT_EVENT_TYPE_UPDATE = 2;
+  AUDIT_EVENT_TYPE_DELETE = 3;
+  AUDIT_EVENT_TYPE_LOGIN = 4;
+  AUDIT_EVENT_TYPE_LOGOUT = 5;
+  AUDIT_EVENT_TYPE_PERMISSION_CHANGE = 6;
+  AUDIT_EVENT_TYPE_PAYMENT = 7;
+  AUDIT_EVENT_TYPE_ORDER = 8;
+  AUDIT_EVENT_TYPE_INTEGRATION = 9;
+  AUDIT_EVENT_TYPE_CONFIG_CHANGE = 10;
+  AUDIT_EVENT_TYPE_WEBHOOK = 11;
+  AUDIT_EVENT_TYPE_FILE_UPLOAD = 12;
+  AUDIT_EVENT_TYPE_FILE_DELETE = 13;
+  AUDIT_EVENT_TYPE_EXPORT = 14;
+  AUDIT_EVENT_TYPE_IMPORT = 15;
+}
+
+enum ConfigScope {
+  CONFIG_SCOPE_UNSPECIFIED = 0;
+  CONFIG_SCOPE_GLOBAL = 1;
+  CONFIG_SCOPE_TENANT = 2;
+  CONFIG_SCOPE_ORGANIZATION = 3;
+  CONFIG_SCOPE_USER = 4;
+  CONFIG_SCOPE_APPLICATION = 5;
+  CONFIG_SCOPE_ENVIRONMENT = 6;
+}
+
+enum ConfigDataType {
+  CONFIG_DATA_TYPE_UNSPECIFIED = 0;
+  CONFIG_DATA_TYPE_STRING = 1;
+  CONFIG_DATA_TYPE_INTEGER = 2;
+  CONFIG_DATA_TYPE_FLOAT = 3;
+  CONFIG_DATA_TYPE_BOOLEAN = 4;
+  CONFIG_DATA_TYPE_JSON = 5;
+  CONFIG_DATA_TYPE_ARRAY = 6;
+}
+
+enum WebhookStatus {
+  WEBHOOK_STATUS_UNSPECIFIED = 0;
+  WEBHOOK_STATUS_ACTIVE = 1;
+  WEBHOOK_STATUS_PAUSED = 2;
+  WEBHOOK_STATUS_DISABLED = 3;
+  WEBHOOK_STATUS_ERROR = 4;
+}
+
+enum DeliveryStatus {
+  DELIVERY_STATUS_UNSPECIFIED = 0;
+  DELIVERY_STATUS_PENDING = 1;
+  DELIVERY_STATUS_SUCCESS = 2;
+  DELIVERY_STATUS_FAILED = 3;
+  DELIVERY_STATUS_RETRY = 4;
+  DELIVERY_STATUS_CANCELLED = 5;
+}
+
+message AuditEvent {
+  string event_id = 1;
+  types.TenantContext tenant_context = 2;
+  AuditEventType event_type = 3;
+  string resource_type = 4;
+  string resource_id = 5;
+  string actor_id = 6;
+  string actor_type = 7;
+  string action = 8;
+  google.protobuf.Struct before_state = 9;
+  google.protobuf.Struct after_state = 10;
+  string ip_address = 11;
+  string user_agent = 12;
+  string session_id = 13;
+  string correlation_id = 14;
+  string risk_score = 15;
+  map<string, string> metadata = 16;
+  google.protobuf.Timestamp timestamp = 17;
+}
+
+message AuditReport {
+  string report_id = 1;
+  string name = 2;
+  string description = 3;
+  AuditReportFilter filter = 4;
+  string format = 5; // JSON, CSV, PDF
+  string download_url = 6;
+  google.protobuf.Timestamp created_at = 7;
+  google.protobuf.Timestamp expires_at = 8;
+  int32 total_events = 9;
+}
+
+message AuditReportFilter {
+  repeated AuditEventType event_types = 1;
+  repeated string resource_types = 2;
+  repeated string actor_ids = 3;
+  google.protobuf.Timestamp start_time = 4;
+  google.protobuf.Timestamp end_time = 5;
+  map<string, string> metadata_filters = 6;
+}
+
+message AuditStatistics {
+  int32 total_events = 1;
+  map<string, int32> events_by_type = 2;
+  map<string, int32> events_by_actor = 3;
+  map<string, int32> events_by_resource = 4;
+  repeated AuditTrend trends = 5;
+  repeated string top_risk_events = 6;
+}
+
+message AuditTrend {
+  google.protobuf.Timestamp timestamp = 1;
+  int32 event_count = 2;
+  string trend_type = 3;
+}
+
+message Configuration {
+  string config_id = 1;
+  string key = 2;
+  google.protobuf.Struct value = 3;
+  ConfigScope scope = 4;
+  string scope_id = 5;
+  string description = 6;
+  bool is_sensitive = 7;
+  bool is_readonly = 8;
+  ConfigDataType data_type = 9;
+  google.protobuf.Struct validation_rules = 10;
+  google.protobuf.Struct default_value = 11;
+  repeated string tags = 12;
+  google.protobuf.Timestamp created_at = 13;
+  google.protobuf.Timestamp updated_at = 14;
+  string updated_by = 15;
+  int32 version = 16;
+}
+
+message ConfigHistory {
+  string history_id = 1;
+  string config_id = 2;
+  string key = 3;
+  google.protobuf.Struct old_value = 4;
+  google.protobuf.Struct new_value = 5;
+  string changed_by = 6;
+  string change_reason = 7;
+  google.protobuf.Timestamp changed_at = 8;
+  int32 version = 9;
+}
+
+message ConfigBackup {
+  string backup_id = 1;
+  string name = 2;
+  string description = 3;
+  repeated Configuration configurations = 4;
+  google.protobuf.Timestamp created_at = 5;
+  string created_by = 6;
+  int64 size_bytes = 7;
+}
+
+message Webhook {
+  string webhook_id = 1;
+  types.TenantContext tenant_context = 2;
+  string name = 3;
+  string description = 4;
+  string url = 5;
+  repeated string events = 6;
+  map<string, string> headers = 7;
+  string secret = 8;
+  WebhookStatus status = 9;
+  int32 retry_count = 10;
+  int32 timeout_seconds = 11;
+  string failure_threshold = 12;
+  bool verify_ssl = 13;
+  repeated string allowed_ips = 14;
+  google.protobuf.Timestamp created_at = 15;
+  google.protobuf.Timestamp updated_at = 16;
+  google.protobuf.Timestamp last_triggered = 17;
+}
+
+message WebhookDelivery {
+  string delivery_id = 1;
+  string webhook_id = 2;
+  string event_type = 3;
+  string event_id = 4;
+  string payload = 5;
+  map<string, string> headers = 6;
+  int32 response_code = 7;
+  string response_body = 8;
+  DeliveryStatus status = 9;
+  int32 attempt_number = 10;
+  int32 max_attempts = 11;
+  double duration_ms = 12;
+  string error_message = 13;
+  google.protobuf.Timestamp delivered_at = 14;
+  google.protobuf.Timestamp next_retry_at = 15;
+}
+
+message WebhookStats {
+  string webhook_id = 1;
+  int32 total_deliveries = 2;
+  int32 successful_deliveries = 3;
+  int32 failed_deliveries = 4;
+  double success_rate = 5;
+  double average_response_time = 6;
+  google.protobuf.Timestamp last_delivery = 7;
+  repeated WebhookEventStats event_stats = 8;
+}
+
+message WebhookEventStats {
+  string event_type = 1;
+  int32 delivery_count = 2;
+  int32 success_count = 3;
+  int32 failure_count = 4;
+  double success_rate = 5;
+}
+
+message FileMetadata {
+  string file_id = 1;
+  types.TenantContext tenant_context = 2;
+  string filename = 3;
+  string original_filename = 4;
+  string content_type = 5;
+  int64 size = 6;
+  string checksum = 7;
+  string storage_path = 8;
+  string public_url = 9;
+  bool is_public = 10;
+  bool is_encrypted = 11;
+  string owner_id = 12;
+  repeated string tags = 13;
+  map<string, string> metadata = 14;
+  google.protobuf.Timestamp created_at = 15;
+  google.protobuf.Timestamp updated_at = 16;
+  google.protobuf.Timestamp expires_at = 17;
+  google.protobuf.Timestamp last_accessed = 18;
+}
+
+message StorageQuota {
+  int64 total_bytes = 1;
+  int64 used_bytes = 2;
+  int64 available_bytes = 3;
+  int32 file_count = 4;
+  int32 max_file_count = 5;
+  int64 max_file_size = 6;
+  repeated string allowed_types = 7;
+}
+
+// Audit Service Request/Response Messages
+message LogEventRequest {
+  types.TenantContext tenant_context = 1;
+  AuditEvent event = 2;
+}
+
+message LogEventResponse {
+  string event_id = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message GetAuditLogRequest {
+  types.TenantContext tenant_context = 1;
+  string event_id = 2;
+}
+
+message GetAuditLogResponse {
+  AuditEvent event = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message ListAuditLogsRequest {
+  types.TenantContext tenant_context = 1;
+  int32 page_size = 2;
+  string page_token = 3;
+  AuditReportFilter filter = 4;
+  string sort_by = 5;
+  string sort_order = 6; // ASC, DESC
+}
+
+message ListAuditLogsResponse {
+  repeated AuditEvent events = 1;
+  string next_page_token = 2;
+  int32 total_count = 3;
+  bool success = 4;
+  string message = 5;
+}
+
+message CreateAuditReportRequest {
+  types.TenantContext tenant_context = 1;
+  string name = 2;
+  string description = 3;
+  AuditReportFilter filter = 4;
+  string format = 5;
+  bool schedule_recurring = 6;
+  string cron_expression = 7;
+}
+
+message CreateAuditReportResponse {
+  AuditReport report = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message GetAuditStatisticsRequest {
+  types.TenantContext tenant_context = 1;
+  google.protobuf.Timestamp start_time = 2;
+  google.protobuf.Timestamp end_time = 3;
+  string granularity = 4; // hour, day, week, month
+}
+
+message GetAuditStatisticsResponse {
+  AuditStatistics statistics = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message ExportAuditLogsRequest {
+  types.TenantContext tenant_context = 1;
+  AuditReportFilter filter = 2;
+  string format = 3;
+  string compression = 4; // none, gzip, zip
+}
+
+message ExportAuditLogsResponse {
+  string download_url = 1;
+  google.protobuf.Timestamp expires_at = 2;
+  bool success = 3;
+  string message = 4;
+}
+
+// Configuration Service Request/Response Messages
+message GetConfigRequest {
+  types.TenantContext tenant_context = 1;
+  string key = 2;
+  ConfigScope scope = 3;
+  string scope_id = 4;
+}
+
+message GetConfigResponse {
+  Configuration config = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message UpdateConfigRequest {
+  types.TenantContext tenant_context = 1;
+  string key = 2;
+  google.protobuf.Struct value = 3;
+  ConfigScope scope = 4;
+  string scope_id = 5;
+  string change_reason = 6;
+  bool validate_only = 7;
+}
+
+message UpdateConfigResponse {
+  Configuration config = 1;
+  bool success = 2;
+  string message = 3;
+  repeated string validation_errors = 4;
+}
+
+message ListConfigsRequest {
+  types.TenantContext tenant_context = 1;
+  int32 page_size = 2;
+  string page_token = 3;
+  ConfigScope scope_filter = 4;
+  string scope_id_filter = 5;
+  string key_prefix = 6;
+  repeated string tags = 7;
+}
+
+message ListConfigsResponse {
+  repeated Configuration configs = 1;
+  string next_page_token = 2;
+  int32 total_count = 3;
+  bool success = 4;
+  string message = 5;
+}
+
+message ResetConfigRequest {
+  types.TenantContext tenant_context = 1;
+  string key = 2;
+  ConfigScope scope = 3;
+  string scope_id = 4;
+  string reason = 5;
+}
+
+message ResetConfigResponse {
+  Configuration config = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message GetConfigHistoryRequest {
+  types.TenantContext tenant_context = 1;
+  string key = 2;
+  ConfigScope scope = 3;
+  string scope_id = 4;
+  int32 page_size = 5;
+  string page_token = 6;
+}
+
+message GetConfigHistoryResponse {
+  repeated ConfigHistory history = 1;
+  string next_page_token = 2;
+  int32 total_count = 3;
+  bool success = 4;
+  string message = 5;
+}
+
+message ValidateConfigRequest {
+  types.TenantContext tenant_context = 1;
+  string key = 2;
+  google.protobuf.Struct value = 3;
+  ConfigScope scope = 4;
+  string scope_id = 5;
+}
+
+message ValidateConfigResponse {
+  bool is_valid = 1;
+  repeated string validation_errors = 2;
+  repeated string warnings = 3;
+  bool success = 4;
+  string message = 5;
+}
+
+message BackupConfigsRequest {
+  types.TenantContext tenant_context = 1;
+  string name = 2;
+  string description = 3;
+  ConfigScope scope_filter = 4;
+  string scope_id_filter = 5;
+  repeated string key_patterns = 6;
+}
+
+message BackupConfigsResponse {
+  ConfigBackup backup = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message RestoreConfigsRequest {
+  types.TenantContext tenant_context = 1;
+  string backup_id = 2;
+  bool dry_run = 3;
+  bool overwrite_existing = 4;
+  repeated string key_patterns = 5;
+}
+
+message RestoreConfigsResponse {
+  int32 restored_count = 1;
+  int32 skipped_count = 2;
+  repeated string errors = 3;
+  bool success = 4;
+  string message = 5;
+}
+
+// Webhook Service Request/Response Messages
+message CreateWebhookRequest {
+  types.TenantContext tenant_context = 1;
+  Webhook webhook = 2;
+  bool test_connection = 3;
+}
+
+message CreateWebhookResponse {
+  Webhook webhook = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message GetWebhookRequest {
+  types.TenantContext tenant_context = 1;
+  string webhook_id = 2;
+}
+
+message GetWebhookResponse {
+  Webhook webhook = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message UpdateWebhookRequest {
+  types.TenantContext tenant_context = 1;
+  string webhook_id = 2;
+  Webhook webhook = 3;
+  repeated string update_mask = 4;
+}
+
+message UpdateWebhookResponse {
+  Webhook webhook = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message ListWebhooksRequest {
+  types.TenantContext tenant_context = 1;
+  int32 page_size = 2;
+  string page_token = 3;
+  WebhookStatus status_filter = 4;
+  repeated string event_filters = 5;
+}
+
+message ListWebhooksResponse {
+  repeated Webhook webhooks = 1;
+  string next_page_token = 2;
+  int32 total_count = 3;
+  bool success = 4;
+  string message = 5;
+}
+
+message DeleteWebhookRequest {
+  types.TenantContext tenant_context = 1;
+  string webhook_id = 2;
+}
+
+message DeleteWebhookResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message TestWebhookRequest {
+  types.TenantContext tenant_context = 1;
+  string webhook_id = 2;
+  string test_event_type = 3;
+  google.protobuf.Struct test_payload = 4;
+}
+
+message TestWebhookResponse {
+  bool success = 1;
+  string message = 2;
+  int32 response_code = 3;
+  string response_body = 4;
+  double response_time_ms = 5;
+}
+
+message GetWebhookDeliveriesRequest {
+  types.TenantContext tenant_context = 1;
+  string webhook_id = 2;
+  int32 page_size = 3;
+  string page_token = 4;
+  DeliveryStatus status_filter = 5;
+  google.protobuf.Timestamp start_time = 6;
+  google.protobuf.Timestamp end_time = 7;
+}
+
+message GetWebhookDeliveriesResponse {
+  repeated WebhookDelivery deliveries = 1;
+  string next_page_token = 2;
+  int32 total_count = 3;
+  bool success = 4;
+  string message = 5;
+}
+
+message ResendWebhookRequest {
+  types.TenantContext tenant_context = 1;
+  string delivery_id = 2;
+  bool force_resend = 3;
+}
+
+message ResendWebhookResponse {
+  string new_delivery_id = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message GetWebhookStatsRequest {
+  types.TenantContext tenant_context = 1;
+  string webhook_id = 2;
+  google.protobuf.Timestamp start_time = 3;
+  google.protobuf.Timestamp end_time = 4;
+}
+
+message GetWebhookStatsResponse {
+  WebhookStats stats = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message PauseWebhookRequest {
+  types.TenantContext tenant_context = 1;
+  string webhook_id = 2;
+  string reason = 3;
+}
+
+message PauseWebhookResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message ResumeWebhookRequest {
+  types.TenantContext tenant_context = 1;
+  string webhook_id = 2;
+}
+
+message ResumeWebhookResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+// File Storage Service Request/Response Messages
+message UploadFileRequest {
+  types.TenantContext tenant_context = 1;
+  string filename = 2;
+  string content_type = 3;
+  bytes file_data = 4;
+  bool is_public = 5;
+  map<string, string> metadata = 6;
+  repeated string tags = 7;
+  google.protobuf.Timestamp expires_at = 8;
+}
+
+message UploadFileResponse {
+  FileMetadata file_metadata = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message GetFileRequest {
+  types.TenantContext tenant_context = 1;
+  string file_id = 2;
+  bool include_content = 3;
+}
+
+message GetFileResponse {
+  FileMetadata file_metadata = 1;
+  bytes file_data = 2;
+  bool success = 3;
+  string message = 4;
+}
+
+message DeleteFileRequest {
+  types.TenantContext tenant_context = 1;
+  string file_id = 2;
+  bool permanent = 3;
+}
+
+message DeleteFileResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message ListFilesRequest {
+  types.TenantContext tenant_context = 1;
+  int32 page_size = 2;
+  string page_token = 3;
+  string content_type_filter = 4;
+  repeated string tags = 5;
+  string filename_pattern = 6;
+  google.protobuf.Timestamp created_after = 7;
+  google.protobuf.Timestamp created_before = 8;
+}
+
+message ListFilesResponse {
+  repeated FileMetadata files = 1;
+  string next_page_token = 2;
+  int32 total_count = 3;
+  bool success = 4;
+  string message = 5;
+}
+
+message GetUploadUrlRequest {
+  types.TenantContext tenant_context = 1;
+  string filename = 2;
+  string content_type = 3;
+  int64 file_size = 4;
+  map<string, string> metadata = 5;
+  int32 expires_in_seconds = 6;
+}
+
+message GetUploadUrlResponse {
+  string upload_url = 1;
+  string file_id = 2;
+  map<string, string> upload_headers = 3;
+  google.protobuf.Timestamp expires_at = 4;
+  bool success = 5;
+  string message = 6;
+}
+
+message GetDownloadUrlRequest {
+  types.TenantContext tenant_context = 1;
+  string file_id = 2;
+  int32 expires_in_seconds = 3;
+  string filename_override = 4;
+}
+
+message GetDownloadUrlResponse {
+  string download_url = 1;
+  google.protobuf.Timestamp expires_at = 2;
+  bool success = 3;
+  string message = 4;
+}
+
+message MoveFileRequest {
+  types.TenantContext tenant_context = 1;
+  string file_id = 2;
+  string new_path = 3;
+  string new_filename = 4;
+}
+
+message MoveFileResponse {
+  FileMetadata file_metadata = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message CopyFileRequest {
+  types.TenantContext tenant_context = 1;
+  string file_id = 2;
+  string new_filename = 3;
+  map<string, string> metadata_updates = 4;
+}
+
+message CopyFileResponse {
+  FileMetadata file_metadata = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message GetStorageQuotaRequest {
+  types.TenantContext tenant_context = 1;
+}
+
+message GetStorageQuotaResponse {
+  StorageQuota quota = 1;
+  bool success = 2;
+  string message = 3;
+}

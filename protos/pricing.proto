@@ -1,0 +1,384 @@
+syntax = "proto3";
+
+package pricing;
+
+import "protos/types.proto";
+import "google/protobuf/timestamp.proto";
+
+
+service PricingService {
+  rpc GetPrice(GetPriceRequest) returns (GetPriceResponse);
+  rpc CalculateOrderTotal(CalculateOrderTotalRequest) returns (CalculateOrderTotalResponse);
+  rpc CreatePriceRule(CreatePriceRuleRequest) returns (CreatePriceRuleResponse);
+  rpc UpdatePriceRule(UpdatePriceRuleRequest) returns (UpdatePriceRuleResponse);
+  rpc ListPriceRules(ListPriceRulesRequest) returns (ListPriceRulesResponse);
+  rpc CreateDiscount(CreateDiscountRequest) returns (CreateDiscountResponse);
+  rpc ValidateDiscount(ValidateDiscountRequest) returns (ValidateDiscountResponse);
+}
+
+service TaxService {
+  rpc CalculateTax(CalculateTaxRequest) returns (CalculateTaxResponse);
+  rpc GetTaxRates(GetTaxRatesRequest) returns (GetTaxRatesResponse);
+  rpc CreateTaxRule(CreateTaxRuleRequest) returns (CreateTaxRuleResponse);
+  rpc UpdateTaxRule(UpdateTaxRuleRequest) returns (UpdateTaxRuleResponse);
+  rpc ListTaxRules(ListTaxRulesRequest) returns (ListTaxRulesResponse);
+  rpc ValidateVatNumber(ValidateVatNumberRequest) returns (ValidateVatNumberResponse);
+}
+
+enum PriceRuleType {
+  PRICE_RULE_TYPE_UNSPECIFIED = 0;
+  PRICE_RULE_TYPE_PERCENTAGE = 1;
+  PRICE_RULE_TYPE_FIXED_AMOUNT = 2;
+  PRICE_RULE_TYPE_TIERED = 3;
+  PRICE_RULE_TYPE_BULK = 4;
+}
+
+enum DiscountType {
+  DISCOUNT_TYPE_UNSPECIFIED = 0;
+  DISCOUNT_TYPE_PERCENTAGE = 1;
+  DISCOUNT_TYPE_FIXED_AMOUNT = 2;
+  DISCOUNT_TYPE_FREE_SHIPPING = 3;
+  DISCOUNT_TYPE_BOGO = 4; // Buy One Get One
+}
+
+message PriceRule {
+  string rule_id = 1;
+  types.TenantContext tenant_context = 2;
+  string name = 3;
+  PriceRuleType type = 4;
+  PriceRuleCondition condition = 5;
+  PriceRuleAction action = 6;
+  int32 priority = 7;
+  bool is_active = 8;
+  google.protobuf.Timestamp valid_from = 9;
+  google.protobuf.Timestamp valid_to = 10;
+  google.protobuf.Timestamp created_at = 11;
+}
+
+message PriceRuleCondition {
+  repeated string product_ids = 1;
+  repeated string category_ids = 2;
+  repeated string customer_segments = 3;
+  double min_quantity = 4;
+  double min_amount = 5;
+  map<string, string> custom_conditions = 6;
+}
+
+message PriceRuleAction {
+  double discount_percentage = 1;
+  double discount_amount = 2;
+  double fixed_price = 3;
+  map<string, string> custom_actions = 4;
+}
+
+message Discount {
+  string discount_id = 1;
+  types.TenantContext tenant_context = 2;
+  string code = 3;
+  string name = 4;
+  DiscountType type = 5;
+  double value = 6;
+  DiscountCondition condition = 7;
+  int32 usage_limit = 8;
+  int32 usage_count = 9;
+  bool is_active = 10;
+  google.protobuf.Timestamp valid_from = 11;
+  google.protobuf.Timestamp valid_to = 12;
+  google.protobuf.Timestamp created_at = 13;
+}
+
+message DiscountCondition {
+  double min_order_amount = 1;
+  repeated string applicable_products = 2;
+  repeated string applicable_categories = 3;
+  repeated string customer_segments = 4;
+  int32 first_time_customer_only = 5;
+}
+
+message PriceCalculation {
+  double base_price = 1;
+  double discount_amount = 2;
+  double final_price = 3;
+  repeated AppliedPriceRule applied_rules = 4;
+  string currency = 5;
+}
+
+message AppliedPriceRule {
+  string rule_id = 1;
+  string rule_name = 2;
+  double discount_amount = 3;
+  PriceRuleType type = 4;
+}
+
+message OrderItem {
+  string product_id = 1;
+  int32 quantity = 2;
+  double unit_price = 3;
+  map<string, string> attributes = 4;
+}
+
+message OrderTotal {
+  double subtotal = 1;
+  double discount_amount = 2;
+  double tax_amount = 3;
+  double shipping_amount = 4;
+  double total = 5;
+  repeated AppliedPriceRule applied_discounts = 6;
+  TaxCalculation tax_calculation = 7;
+  string currency = 8;
+}
+
+message TaxCalculation {
+  double subtotal = 1;
+  double tax_amount = 2;
+  double total = 3;
+  repeated TaxBreakdown breakdown = 4;
+  string currency = 5;
+}
+
+message TaxBreakdown {
+  string tax_name = 1;
+  string tax_type = 2;
+  double rate = 3;
+  double amount = 4;
+  string jurisdiction = 5;
+}
+
+message TaxRule {
+  string rule_id = 1;
+  types.TenantContext tenant_context = 2;
+  string name = 3;
+  string jurisdiction = 4;
+  double rate = 5;
+  TaxRuleCondition condition = 6;
+  bool is_active = 7;
+  google.protobuf.Timestamp created_at = 8;
+  google.protobuf.Timestamp updated_at = 9;
+}
+
+message TaxRuleCondition {
+  repeated string product_categories = 1;
+  repeated string customer_types = 2;
+  string ship_from_location = 3;
+  string ship_to_location = 4;
+  map<string, string> custom_conditions = 5;
+}
+
+message Address {
+  string country = 1;
+  string state = 2;
+  string city = 3;
+  string postal_code = 4;
+  string address_line1 = 5;
+  string address_line2 = 6;
+}
+
+// Pricing Service Request/Response Messages
+message GetPriceRequest {
+  types.TenantContext tenant_context = 1;
+  string product_id = 2;
+  int32 quantity = 3;
+  string customer_id = 4;
+  map<string, string> context = 5;
+}
+
+message GetPriceResponse {
+  PriceCalculation price_calculation = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message CalculateOrderTotalRequest {
+  types.TenantContext tenant_context = 1;
+  repeated OrderItem items = 2;
+  string customer_id = 3;
+  string discount_code = 4;
+  Address shipping_address = 5;
+  Address billing_address = 6;
+  double shipping_cost = 7;
+}
+
+message CalculateOrderTotalResponse {
+  OrderTotal order_total = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message CreatePriceRuleRequest {
+  types.TenantContext tenant_context = 1;
+  string name = 2;
+  PriceRuleType type = 3;
+  PriceRuleCondition condition = 4;
+  PriceRuleAction action = 5;
+  int32 priority = 6;
+  google.protobuf.Timestamp valid_from = 7;
+  google.protobuf.Timestamp valid_to = 8;
+}
+
+message CreatePriceRuleResponse {
+  string rule_id = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message UpdatePriceRuleRequest {
+  types.TenantContext tenant_context = 1;
+  string rule_id = 2;
+  string name = 3;
+  PriceRuleCondition condition = 4;
+  PriceRuleAction action = 5;
+  int32 priority = 6;
+  bool is_active = 7;
+  google.protobuf.Timestamp valid_from = 8;
+  google.protobuf.Timestamp valid_to = 9;
+}
+
+message UpdatePriceRuleResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message ListPriceRulesRequest {
+  types.TenantContext tenant_context = 1;
+  int32 page_size = 2;
+  string page_token = 3;
+  bool active_only = 4;
+  PriceRuleType type_filter = 5;
+}
+
+message ListPriceRulesResponse {
+  repeated PriceRule price_rules = 1;
+  string next_page_token = 2;
+  int32 total_count = 3;
+  bool success = 4;
+  string message = 5;
+}
+
+message CreateDiscountRequest {
+  types.TenantContext tenant_context = 1;
+  string code = 2;
+  string name = 3;
+  DiscountType type = 4;
+  double value = 5;
+  DiscountCondition condition = 6;
+  int32 usage_limit = 7;
+  google.protobuf.Timestamp valid_from = 8;
+  google.protobuf.Timestamp valid_to = 9;
+}
+
+message CreateDiscountResponse {
+  string discount_id = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message ValidateDiscountRequest {
+  types.TenantContext tenant_context = 1;
+  string discount_code = 2;
+  string customer_id = 3;
+  repeated OrderItem items = 4;
+  double order_amount = 5;
+}
+
+message ValidateDiscountResponse {
+  bool is_valid = 1;
+  Discount discount = 2;
+  double discount_amount = 3;
+  string validation_message = 4;
+  bool success = 5;
+  string message = 6;
+}
+
+// Tax Service Request/Response Messages
+message CalculateTaxRequest {
+  types.TenantContext tenant_context = 1;
+  repeated OrderItem items = 2;
+  Address shipping_address = 3;
+  Address billing_address = 4;
+  string customer_type = 5;
+  string vat_number = 6;
+}
+
+message CalculateTaxResponse {
+  TaxCalculation tax_calculation = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message GetTaxRatesRequest {
+  types.TenantContext tenant_context = 1;
+  string jurisdiction = 2;
+  repeated string product_categories = 3;
+}
+
+message GetTaxRatesResponse {
+  repeated TaxRate tax_rates = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message TaxRate {
+  string jurisdiction = 1;
+  string tax_type = 2;
+  double rate = 3;
+  string description = 4;
+}
+
+message CreateTaxRuleRequest {
+  types.TenantContext tenant_context = 1;
+  string name = 2;
+  string jurisdiction = 3;
+  double rate = 4;
+  TaxRuleCondition condition = 5;
+}
+
+message CreateTaxRuleResponse {
+  string rule_id = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message UpdateTaxRuleRequest {
+  types.TenantContext tenant_context = 1;
+  string rule_id = 2;
+  string name = 3;
+  double rate = 4;
+  TaxRuleCondition condition = 5;
+  bool is_active = 6;
+}
+
+message UpdateTaxRuleResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message ListTaxRulesRequest {
+  types.TenantContext tenant_context = 1;
+  int32 page_size = 2;
+  string page_token = 3;
+  string jurisdiction_filter = 4;
+  bool active_only = 5;
+}
+
+message ListTaxRulesResponse {
+  repeated TaxRule tax_rules = 1;
+  string next_page_token = 2;
+  int32 total_count = 3;
+  bool success = 4;
+  string message = 5;
+}
+
+message ValidateVatNumberRequest {
+  types.TenantContext tenant_context = 1;
+  string vat_number = 2;
+  string country_code = 3;
+}
+
+message ValidateVatNumberResponse {
+  bool is_valid = 1;
+  string company_name = 2;
+  string company_address = 3;
+  string validation_message = 4;
+  bool success = 5;
+  string message = 6;
+}

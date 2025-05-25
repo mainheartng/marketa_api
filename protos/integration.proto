@@ -1,0 +1,409 @@
+syntax = "proto3";
+
+package integration;
+
+import "protos/types.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/struct.proto";
+
+service IntegrationService {
+  rpc CreateIntegration(CreateIntegrationRequest) returns (CreateIntegrationResponse);
+  rpc GetIntegration(GetIntegrationRequest) returns (GetIntegrationResponse);
+  rpc UpdateIntegration(UpdateIntegrationRequest) returns (UpdateIntegrationResponse);
+  rpc ListIntegrations(ListIntegrationsRequest) returns (ListIntegrationsResponse);
+  rpc TestIntegration(TestIntegrationRequest) returns (TestIntegrationResponse);
+  rpc EnableIntegration(EnableIntegrationRequest) returns (EnableIntegrationResponse);
+  rpc DisableIntegration(DisableIntegrationRequest) returns (DisableIntegrationResponse);
+  rpc GetIntegrationLogs(GetIntegrationLogsRequest) returns (GetIntegrationLogsResponse);
+  rpc SyncIntegration(SyncIntegrationRequest) returns (SyncIntegrationResponse);
+  rpc DeleteIntegration(DeleteIntegrationRequest) returns (DeleteIntegrationResponse);
+  rpc GetIntegrationHealth(GetIntegrationHealthRequest) returns (GetIntegrationHealthResponse);
+  rpc ProcessWebhook(ProcessWebhookRequest) returns (ProcessWebhookResponse);
+}
+
+service DataSyncService {
+  rpc StartSync(StartSyncRequest) returns (StartSyncResponse);
+  rpc GetSyncStatus(GetSyncStatusRequest) returns (GetSyncStatusResponse);
+  rpc ListSyncJobs(ListSyncJobsRequest) returns (ListSyncJobsResponse);
+  rpc CancelSync(CancelSyncRequest) returns (CancelSyncResponse);
+  rpc RetryFailedSync(RetryFailedSyncRequest) returns (RetryFailedSyncResponse);
+}
+
+enum IntegrationType {
+  INTEGRATION_TYPE_UNSPECIFIED = 0;
+  INTEGRATION_TYPE_PAYMENT = 1;
+  INTEGRATION_TYPE_LOGISTICS = 2;
+  INTEGRATION_TYPE_INVENTORY = 3;
+  INTEGRATION_TYPE_ACCOUNTING = 4;
+  INTEGRATION_TYPE_MARKETING = 5;
+  INTEGRATION_TYPE_CRM = 6;
+  INTEGRATION_TYPE_ERP = 7;
+  INTEGRATION_TYPE_WEBHOOK = 8;
+  INTEGRATION_TYPE_ANALYTICS = 9;
+  INTEGRATION_TYPE_EMAIL = 10;
+  INTEGRATION_TYPE_SMS = 11;
+}
+
+enum IntegrationStatus {
+  INTEGRATION_STATUS_UNSPECIFIED = 0;
+  INTEGRATION_STATUS_CONNECTED = 1;
+  INTEGRATION_STATUS_DISCONNECTED = 2;
+  INTEGRATION_STATUS_ERROR = 3;
+  INTEGRATION_STATUS_SYNCING = 4;
+  INTEGRATION_STATUS_PENDING = 5;
+  INTEGRATION_STATUS_SUSPENDED = 6;
+}
+
+enum SyncStatus {
+  SYNC_STATUS_UNSPECIFIED = 0;
+  SYNC_STATUS_PENDING = 1;
+  SYNC_STATUS_RUNNING = 2;
+  SYNC_STATUS_COMPLETED = 3;
+  SYNC_STATUS_FAILED = 4;
+  SYNC_STATUS_CANCELLED = 5;
+  SYNC_STATUS_PARTIAL = 6;
+}
+
+enum LogLevel {
+  LOG_LEVEL_UNSPECIFIED = 0;
+  LOG_LEVEL_DEBUG = 1;
+  LOG_LEVEL_INFO = 2;
+  LOG_LEVEL_WARNING = 3;
+  LOG_LEVEL_ERROR = 4;
+  LOG_LEVEL_CRITICAL = 5;
+}
+
+message Integration {
+  string integration_id = 1;
+  types.TenantContext tenant_context = 2;
+  string name = 3;
+  string description = 4;
+  IntegrationType type = 5;
+  string provider = 6;
+  string version = 7;
+  IntegrationConfig config = 8;
+  bool is_enabled = 9;
+  IntegrationStatus status = 10;
+  IntegrationHealthMetrics health_metrics = 11;
+  google.protobuf.Timestamp last_sync = 12;
+  google.protobuf.Timestamp created_at = 13;
+  google.protobuf.Timestamp updated_at = 14;
+  map<string, string> tags = 15;
+}
+
+message IntegrationConfig {
+  string endpoint_url = 1;
+  map<string, string> authentication = 2;
+  map<string, string> settings = 3;
+  repeated string supported_events = 4;
+  int32 timeout_seconds = 5;
+  int32 retry_attempts = 6;
+  string sync_frequency = 7; // cron expression
+  map<string, string> field_mappings = 8;
+  repeated string required_permissions = 9;
+}
+
+message IntegrationHealthMetrics {
+  double uptime_percentage = 1;
+  int32 successful_requests = 2;
+  int32 failed_requests = 3;
+  double average_response_time = 4;
+  google.protobuf.Timestamp last_health_check = 5;
+  repeated string recent_errors = 6;
+}
+
+message IntegrationLog {
+  string log_id = 1;
+  string integration_id = 2;
+  LogLevel level = 3;
+  string event_type = 4;
+  string operation = 5;
+  string request_data = 6;
+  string response_data = 7;
+  bool success = 8;
+  string error_message = 9;
+  int32 response_code = 10;
+  double execution_time_ms = 11;
+  string correlation_id = 12;
+  google.protobuf.Timestamp created_at = 13;
+  map<string, string> metadata = 14;
+}
+
+message SyncJob {
+  string job_id = 1;
+  string integration_id = 2;
+  string name = 3;
+  SyncStatus status = 4;
+  string sync_type = 5; // full, incremental, delta
+  SyncProgress progress = 6;
+  SyncStatistics statistics = 7;
+  string error_message = 8;
+  google.protobuf.Timestamp started_at = 9;
+  google.protobuf.Timestamp completed_at = 10;
+  google.protobuf.Timestamp next_run = 11;
+  map<string, string> parameters = 12;
+}
+
+message SyncProgress {
+  int32 total_records = 1;
+  int32 processed_records = 2;
+  int32 successful_records = 3;
+  int32 failed_records = 4;
+  double percentage_complete = 5;
+  string current_operation = 6;
+}
+
+message SyncStatistics {
+  int32 records_created = 1;
+  int32 records_updated = 2;
+  int32 records_deleted = 3;
+  int32 records_skipped = 4;
+  int32 records_failed = 5;
+  double total_execution_time_ms = 6;
+  repeated string warnings = 7;
+}
+
+message WebhookEvent {
+  string event_id = 1;
+  string integration_id = 2;
+  string event_type = 3;
+  string source = 4;
+  google.protobuf.Struct payload = 5;
+  map<string, string> headers = 6;
+  string signature = 7;
+  google.protobuf.Timestamp received_at = 8;
+  bool processed = 9;
+}
+
+// Integration Service Request/Response Messages
+message CreateIntegrationRequest {
+  types.TenantContext tenant_context = 1;
+  Integration integration = 2;
+  bool test_connection = 3;
+}
+
+message CreateIntegrationResponse {
+  Integration integration = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message GetIntegrationRequest {
+  types.TenantContext tenant_context = 1;
+  string integration_id = 2;
+}
+
+message GetIntegrationResponse {
+  Integration integration = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message UpdateIntegrationRequest {
+  types.TenantContext tenant_context = 1;
+  string integration_id = 2;
+  Integration integration = 3;
+  repeated string update_mask = 4;
+}
+
+message UpdateIntegrationResponse {
+  Integration integration = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message ListIntegrationsRequest {
+  types.TenantContext tenant_context = 1;
+  int32 page_size = 2;
+  string page_token = 3;
+  IntegrationType type_filter = 4;
+  IntegrationStatus status_filter = 5;
+  string provider_filter = 6;
+  bool enabled_only = 7;
+}
+
+message ListIntegrationsResponse {
+  repeated Integration integrations = 1;
+  string next_page_token = 2;
+  int32 total_count = 3;
+  bool success = 4;
+  string message = 5;
+}
+
+message TestIntegrationRequest {
+  types.TenantContext tenant_context = 1;
+  string integration_id = 2;
+  repeated string test_operations = 3;
+}
+
+message TestIntegrationResponse {
+  bool success = 1;
+  string message = 2;
+  map<string, string> test_results = 3;
+  repeated TestResult detailed_results = 4;
+}
+
+message TestResult {
+  string operation = 1;
+  bool success = 2;
+  string message = 3;
+  double response_time_ms = 4;
+  map<string, string> details = 5;
+}
+
+message EnableIntegrationRequest {
+  types.TenantContext tenant_context = 1;
+  string integration_id = 2;
+}
+
+message EnableIntegrationResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message DisableIntegrationRequest {
+  types.TenantContext tenant_context = 1;
+  string integration_id = 2;
+  string reason = 3;
+}
+
+message DisableIntegrationResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message DeleteIntegrationRequest {
+  types.TenantContext tenant_context = 1;
+  string integration_id = 2;
+  bool force_delete = 3;
+}
+
+message DeleteIntegrationResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message GetIntegrationLogsRequest {
+  types.TenantContext tenant_context = 1;
+  string integration_id = 2;
+  int32 page_size = 3;
+  string page_token = 4;
+  LogLevel level_filter = 5;
+  google.protobuf.Timestamp start_time = 6;
+  google.protobuf.Timestamp end_time = 7;
+  string event_type_filter = 8;
+}
+
+message GetIntegrationLogsResponse {
+  repeated IntegrationLog logs = 1;
+  string next_page_token = 2;
+  int32 total_count = 3;
+  bool success = 4;
+  string message = 5;
+}
+
+message SyncIntegrationRequest {
+  types.TenantContext tenant_context = 1;
+  string integration_id = 2;
+  string sync_type = 3; // full, incremental, delta
+  map<string, string> parameters = 4;
+}
+
+message SyncIntegrationResponse {
+  string job_id = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message GetIntegrationHealthRequest {
+  types.TenantContext tenant_context = 1;
+  string integration_id = 2;
+}
+
+message GetIntegrationHealthResponse {
+  IntegrationHealthMetrics health_metrics = 1;
+  bool is_healthy = 2;
+  repeated string health_issues = 3;
+  bool success = 4;
+  string message = 5;
+}
+
+message ProcessWebhookRequest {
+  types.TenantContext tenant_context = 1;
+  string integration_id = 2;
+  WebhookEvent webhook_event = 3;
+}
+
+message ProcessWebhookResponse {
+  bool success = 1;
+  string message = 2;
+  string processed_event_id = 3;
+}
+
+// Data Sync Service Request/Response Messages
+message StartSyncRequest {
+  types.TenantContext tenant_context = 1;
+  string integration_id = 2;
+  string sync_name = 3;
+  string sync_type = 4;
+  map<string, string> parameters = 5;
+  bool schedule_recurring = 6;
+}
+
+message StartSyncResponse {
+  string job_id = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message GetSyncStatusRequest {
+  types.TenantContext tenant_context = 1;
+  string job_id = 2;
+}
+
+message GetSyncStatusResponse {
+  SyncJob sync_job = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message ListSyncJobsRequest {
+  types.TenantContext tenant_context = 1;
+  string integration_id = 2;
+  int32 page_size = 3;
+  string page_token = 4;
+  SyncStatus status_filter = 5;
+  google.protobuf.Timestamp start_time = 6;
+  google.protobuf.Timestamp end_time = 7;
+}
+
+message ListSyncJobsResponse {
+  repeated SyncJob sync_jobs = 1;
+  string next_page_token = 2;
+  int32 total_count = 3;
+  bool success = 4;
+  string message = 5;
+}
+
+message CancelSyncRequest {
+  types.TenantContext tenant_context = 1;
+  string job_id = 2;
+  string reason = 3;
+}
+
+message CancelSyncResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message RetryFailedSyncRequest {
+  types.TenantContext tenant_context = 1;
+  string job_id = 2;
+  bool retry_failed_records_only = 3;
+}
+
+message RetryFailedSyncResponse {
+  string new_job_id = 1;
+  bool success = 2;
+  string message = 3;
+}

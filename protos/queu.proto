@@ -1,0 +1,190 @@
+syntax = "proto3";
+
+package queu;
+
+import "protos/types.proto";
+import "google/protobuf/timestamp.proto";
+
+service CustomerQueueService {
+  rpc CreateTicket(CreateTicketRequest) returns (CreateTicketResponse);
+  rpc GetTicket(GetTicketRequest) returns (GetTicketResponse);
+  rpc UpdateTicket(UpdateTicketRequest) returns (UpdateTicketResponse);
+  rpc ListTickets(ListTicketsRequest) returns (ListTicketsResponse);
+  rpc AssignTicket(AssignTicketRequest) returns (AssignTicketResponse);
+  rpc AddTicketMessage(AddTicketMessageRequest) returns (AddTicketMessageResponse);
+  rpc CloseTicket(CloseTicketRequest) returns (CloseTicketResponse);
+  rpc GetQueueStats(GetQueueStatsRequest) returns (GetQueueStatsResponse);
+}
+
+enum TicketStatus {
+  TICKET_STATUS_UNSPECIFIED = 0;
+  TICKET_STATUS_OPEN = 1;
+  TICKET_STATUS_IN_PROGRESS = 2;
+  TICKET_STATUS_WAITING_FOR_CUSTOMER = 3;
+  TICKET_STATUS_RESOLVED = 4;
+  TICKET_STATUS_CLOSED = 5;
+}
+
+enum TicketPriority {
+  TICKET_PRIORITY_UNSPECIFIED = 0;
+  TICKET_PRIORITY_LOW = 1;
+  TICKET_PRIORITY_MEDIUM = 2;
+  TICKET_PRIORITY_HIGH = 3;
+  TICKET_PRIORITY_URGENT = 4;
+}
+
+message Ticket {
+  string ticket_id = 1;
+  types.TenantContext tenant_context = 2;
+  string customer_id = 3;
+  string assigned_agent_id = 4;
+  string subject = 5;
+  string description = 6;
+  TicketStatus status = 7;
+  TicketPriority priority = 8;
+  string category = 9;
+  repeated TicketMessage messages = 10;
+  repeated TicketTag tags = 11;
+  map<string, string> custom_fields = 12;
+  google.protobuf.Timestamp created_at = 13;
+  google.protobuf.Timestamp updated_at = 14;
+  google.protobuf.Timestamp resolved_at = 15;
+}
+
+message TicketMessage {
+  string message_id = 1;
+  string sender_id = 2;
+  string sender_type = 3; // customer, agent, system
+  string content = 4;
+  repeated TicketAttachment attachments = 5;
+  bool is_internal = 6;
+  google.protobuf.Timestamp created_at = 7;
+}
+
+message TicketAttachment {
+  string attachment_id = 1;
+  string filename = 2;
+  string content_type = 3;
+  string url = 4;
+  int64 size = 5;
+}
+
+message TicketTag {
+  string tag_id = 1;
+  string name = 2;
+  string color = 3;
+}
+
+message QueueStats {
+  int32 total_tickets = 1;
+  int32 open_tickets = 2;
+  int32 in_progress_tickets = 3;
+  int32 resolved_tickets = 4;
+  double average_response_time = 5;
+  double average_resolution_time = 6;
+  map<string, int32> tickets_by_priority = 7;
+  map<string, int32> tickets_by_category = 8;
+}
+
+
+// Customer Queue Service Requests/Responses
+message CreateTicketRequest {
+  types.TenantContext tenant_context = 1;
+  Ticket ticket = 2;
+}
+
+message CreateTicketResponse {
+  Ticket ticket = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message GetTicketRequest {
+  types.TenantContext tenant_context = 1;
+  string ticket_id = 2;
+}
+
+message GetTicketResponse {
+  Ticket ticket = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message UpdateTicketRequest {
+  types.TenantContext tenant_context = 1;
+  string ticket_id = 2;
+  TicketStatus status = 3;
+  TicketPriority priority = 4;
+  string assigned_agent_id = 5;
+}
+
+message UpdateTicketResponse {
+  Ticket ticket = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message ListTicketsRequest {
+  types.TenantContext tenant_context = 1;
+  types.PageRequest pagination = 2;
+  string customer_id = 3;
+  string assigned_agent_id = 4;
+  TicketStatus status_filter = 5;
+  TicketPriority priority_filter = 6;
+  string category = 7;
+}
+
+message ListTicketsResponse {
+  repeated Ticket tickets = 1;
+  types.PageResponse pagination = 2;
+  bool success = 3;
+  string message = 4;
+}
+
+message AssignTicketRequest {
+  types.TenantContext tenant_context = 1;
+  string ticket_id = 2;
+  string agent_id = 3;
+}
+
+message AssignTicketResponse {
+  Ticket ticket = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message AddTicketMessageRequest {
+  types.TenantContext tenant_context = 1;
+  string ticket_id = 2;
+  TicketMessage message = 3;
+}
+
+message AddTicketMessageResponse {
+  Ticket ticket = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message CloseTicketRequest {
+  types.TenantContext tenant_context = 1;
+  string ticket_id = 2;
+  string resolution = 3;
+}
+
+message CloseTicketResponse {
+  Ticket ticket = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message GetQueueStatsRequest {
+  types.TenantContext tenant_context = 1;
+  google.protobuf.Timestamp start_date = 2;
+  google.protobuf.Timestamp end_date = 3;
+}
+
+message GetQueueStatsResponse {
+  QueueStats stats = 1;
+  bool success = 2;
+  string message = 3;
+}

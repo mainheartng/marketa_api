@@ -1,0 +1,129 @@
+syntax = "proto3";
+
+package customer;
+
+import "protos/types.proto";
+import "google/protobuf/timestamp.proto";
+
+service CustomerService {
+  rpc CreateCustomer(CreateCustomerRequest) returns (CreateCustomerResponse);
+  rpc GetCustomer(GetCustomerRequest) returns (GetCustomerResponse);
+  rpc UpdateCustomer(UpdateCustomerRequest) returns (UpdateCustomerResponse);
+  rpc ListCustomers(ListCustomersRequest) returns (ListCustomersResponse);
+  rpc AddCustomerAddress(AddCustomerAddressRequest) returns (AddCustomerAddressResponse);
+  rpc UpdateCustomerAddress(UpdateCustomerAddressRequest) returns (UpdateCustomerAddressResponse);
+  rpc DeleteCustomerAddress(DeleteCustomerAddressRequest) returns (DeleteCustomerAddressResponse);
+}
+
+message Customer {
+  string customer_id = 1;
+  types.TenantContext tenant_context = 2;
+  string email = 3;
+  string first_name = 4;
+  string last_name = 5;
+  string phone = 6;
+  repeated types.Address addresses = 7;
+  CustomerSegment segment = 8;
+  CustomerStats stats = 9;
+  map<string, string> custom_fields = 10;
+  types.Status status = 11;
+  google.protobuf.Timestamp created_at = 12;
+  google.protobuf.Timestamp updated_at = 13;
+}
+
+message CustomerSegment {
+  string segment_id = 1;
+  string name = 2;
+  map<string, string> criteria = 3;
+}
+
+message CustomerStats {
+  int32 total_orders = 1;
+  double total_spent = 2;
+  double average_order_value = 3;
+  google.protobuf.Timestamp last_order_date = 4;
+}
+
+message CreateCustomerRequest {
+  types.TenantContext tenant_context = 1;
+  Customer customer = 2;
+}
+
+message CreateCustomerResponse {
+  Customer customer = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message GetCustomerRequest {
+  types.TenantContext tenant_context = 1;
+  string customer_id = 2;
+}
+
+message GetCustomerResponse {
+  Customer customer = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message UpdateCustomerRequest {
+  types.TenantContext tenant_context = 1;
+  string customer_id = 2;
+  Customer customer = 3;
+}
+
+message UpdateCustomerResponse {
+  Customer customer = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message ListCustomersRequest {
+  types.TenantContext tenant_context = 1;
+  types.PageRequest pagination = 2;
+  string search_query = 3;
+  string segment_id = 4;
+  types.Status status_filter = 5;
+}
+
+message ListCustomersResponse {
+  repeated Customer customers = 1;
+  types.PageResponse pagination = 2;
+  bool success = 3;
+  string message = 4;
+}
+
+message AddCustomerAddressRequest {
+  types.TenantContext tenant_context = 1;
+  string customer_id = 2;
+  types.Address address = 3;
+}
+
+message AddCustomerAddressResponse {
+  Customer customer = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message UpdateCustomerAddressRequest {
+  types.TenantContext tenant_context = 1;
+  string customer_id = 2;
+  types.Address address = 3;
+}
+
+message UpdateCustomerAddressResponse {
+  Customer customer = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message DeleteCustomerAddressRequest {
+  types.TenantContext tenant_context = 1;
+  string customer_id = 2;
+  string address_id = 3;
+}
+
+message DeleteCustomerAddressResponse {
+  bool success = 1;
+  string message = 2;
+}

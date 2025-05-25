@@ -1,0 +1,119 @@
+syntax = "proto3";
+
+package organization;
+
+import "protos/types.proto";
+import "google/protobuf/timestamp.proto";
+
+service OrganizationService {
+  rpc CreateOrganization(CreateOrganizationRequest) returns (CreateOrganizationResponse);
+  rpc GetOrganization(GetOrganizationRequest) returns (GetOrganizationResponse);
+  rpc UpdateOrganization(UpdateOrganizationRequest) returns (UpdateOrganizationResponse);
+  rpc ListOrganizations(ListOrganizationsRequest) returns (ListOrganizationsResponse);
+  rpc AddUserToOrganization(AddUserToOrganizationRequest) returns (AddUserToOrganizationResponse);
+  rpc RemoveUserFromOrganization(RemoveUserFromOrganizationRequest) returns (RemoveUserFromOrganizationResponse);
+  rpc GetUserOrganizations(GetUserOrganizationsRequest) returns (GetUserOrganizationsResponse);
+}
+
+message Organization {
+  string organization_id = 1;
+  string tenant_id = 2;
+  string name = 3;
+  string description = 4;
+  types.Status status = 5;
+  OrganizationSettings settings = 6;
+  google.protobuf.Timestamp created_at = 7;
+  google.protobuf.Timestamp updated_at = 8;
+}
+
+message OrganizationSettings {
+  bool allow_multi_membership = 1;
+  map<string, string> custom_settings = 2;
+}
+
+
+message CreateOrganizationRequest {
+  types.TenantContext tenant_context = 1;
+  string name = 2;
+  string description = 3;
+  OrganizationSettings settings = 4;
+}
+
+message CreateOrganizationResponse {
+  Organization organization = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message GetOrganizationRequest {
+  types.TenantContext tenant_context = 1;
+  string organization_id = 2;
+}
+
+message GetOrganizationResponse {
+  Organization organization = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message UpdateOrganizationRequest {
+  types.TenantContext tenant_context = 1;
+  string organization_id = 2;
+  string name = 3;
+  string description = 4;
+  OrganizationSettings settings = 5;
+}
+
+message UpdateOrganizationResponse {
+  Organization organization = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message ListOrganizationsRequest {
+  types.TenantContext tenant_context = 1;
+  types.PageRequest pagination = 2;
+  string search_query = 3;
+  types.Status status_filter = 4;
+}
+
+message ListOrganizationsResponse {
+  repeated Organization organizations = 1;
+  types.PageResponse pagination = 2;
+  bool success = 3;
+  string message = 4;
+}
+
+message AddUserToOrganizationRequest {
+  types.TenantContext tenant_context = 1;
+  string organization_id = 2;
+  string user_id = 3;
+  repeated string roles = 4;
+}
+
+message AddUserToOrganizationResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message RemoveUserFromOrganizationRequest {
+  types.TenantContext tenant_context = 1;
+  string organization_id = 2;
+  string user_id = 3;
+}
+
+message RemoveUserFromOrganizationResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message GetUserOrganizationsRequest {
+  string user_id = 1;
+  string tenant_id = 2;
+}
+
+message GetUserOrganizationsResponse {
+  repeated Organization organizations = 1;
+  bool success = 2;
+  string message = 3;
+}

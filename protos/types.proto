@@ -1,0 +1,142 @@
+syntax = "proto3";
+
+package types;
+
+message User {
+  string id = 1;
+  string email = 2;
+  string password = 3;
+  string phone = 4;
+  string full_name = 5;
+  string created_at = 6;
+  string updated_at = 7;
+}
+
+enum OrganizationType {
+  business_name = 0;
+}
+
+enum AdminLevel {
+  owner = 0;
+  admin = 1;
+  viewer = 2;
+  super_admin = 3;
+}
+
+// enum Status {
+//   active = 0;
+//   suspended = 1;
+//   removed = 2;
+// }
+
+enum InviteStatus {
+  pending = 0;
+  rejected = 1;
+  cancelled = 2;
+  accepted = 3;
+}
+
+enum IntegrationTypes {
+  payment = 0;
+  logistic = 1;
+  que = 2;
+  template = 3;
+  component = 4;
+}
+
+message Staff {
+  string id = 1;
+  string user_id = 2;
+  User user = 3;
+  string position = 4;
+  AdminLevel level = 5;
+  Status status = 6;
+  InviteStatus invite = 7;
+  string organization_id = 8;
+  Organization organization = 9;
+}
+
+message Organization {
+  string id = 1;
+  string name = 2;
+  OrganizationType type = 3;
+  repeated Staff staff = 4;
+  repeated Project projects = 5;
+}
+
+message Project {
+  string id = 1;
+  string created_at = 2;
+  string updated_at = 3;
+  string name = 4;
+  Status status = 5;
+  repeated ProjectIntegrations integrations = 6;
+}
+
+message Integrations {
+  string id = 1;
+  string created_at = 2;
+  string updated_at = 3;
+  IntegrationTypes integration_type = 4;
+}
+
+message ProjectIntegrations {
+  string id = 1;
+  string created_at = 2;
+  string project_id = 3;
+  Project project = 4;
+  string integrations_id = 5;
+  Integrations integrations = 6;
+}
+
+// ============================================================================
+// COMMON TYPES & ENUMS
+// ============================================================================
+
+// Multi-tenancy context - included in all requests
+message TenantContext {
+  string tenant_id = 1;
+  string organization_id = 2;
+  string user_id = 3;
+  repeated string user_roles = 4;
+  map<string, string> metadata = 5;
+}
+
+// Common pagination
+message PageRequest {
+  int32 page = 1;
+  int32 page_size = 2;
+  string sort_by = 3;
+  string sort_order = 4; // ASC, DESC
+}
+
+message PageResponse {
+  int32 total_count = 1;
+  int32 page = 2;
+  int32 page_size = 3;
+  bool has_more = 4;
+}
+
+// Common status enum
+enum Status {
+  STATUS_UNSPECIFIED = 0;
+  STATUS_ACTIVE = 1;
+  STATUS_INACTIVE = 2;
+  STATUS_PENDING = 3;
+  STATUS_SUSPENDED = 4;
+  STATUS_DELETED = 5;
+}
+
+message Address {
+  string address_id = 1;
+  string first_name = 2;
+  string last_name = 3;
+  string company = 4;
+  string address_line_1 = 5;
+  string address_line_2 = 6;
+  string city = 7;
+  string state = 8;
+  string postal_code = 9;
+  string country = 10;
+  string phone = 11;
+}

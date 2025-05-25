@@ -1,0 +1,103 @@
+syntax = "proto3";
+
+package tenants;
+
+import "protos/types.proto";
+import "google/protobuf/timestamp.proto";
+// import "google/protobuf/empty.proto";
+// import "google/protobuf/struct.proto";
+
+service TenantService {
+  rpc CreateTenant(CreateTenantRequest) returns (CreateTenantResponse);
+  rpc GetTenant(GetTenantRequest) returns (GetTenantResponse);
+  rpc UpdateTenant(UpdateTenantRequest) returns (UpdateTenantResponse);
+  rpc ListTenants(ListTenantsRequest) returns (ListTenantsResponse);
+  rpc ActivateTenant(ActivateTenantRequest) returns (ActivateTenantResponse);
+  rpc DeactivateTenant(DeactivateTenantRequest) returns (DeactivateTenantResponse);
+}
+
+message Tenant {
+  string tenant_id = 1;
+  string name = 2;
+  string subdomain = 3;
+  types.Status status = 4;
+  TenantSettings settings = 5;
+  google.protobuf.Timestamp created_at = 6;
+  google.protobuf.Timestamp updated_at = 7;
+}
+
+message TenantSettings {
+  string currency = 1;
+  string timezone = 2;
+  string locale = 3;
+  map<string, string> custom_settings = 4;
+}
+
+
+// Tenant Service Requests/Responses
+message CreateTenantRequest {
+  string name = 1;
+  string subdomain = 2;
+  TenantSettings settings = 3;
+  string admin_email = 4;
+}
+
+message CreateTenantResponse {
+  Tenant tenant = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message GetTenantRequest {
+  string tenant_id = 1;
+}
+
+message GetTenantResponse {
+  Tenant tenant = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message UpdateTenantRequest {
+  string tenant_id = 1;
+  string name = 2;
+  TenantSettings settings = 3;
+}
+
+message UpdateTenantResponse {
+  Tenant tenant = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message ListTenantsRequest {
+  types.PageRequest pagination = 1;
+  string search_query = 2;
+  types.Status status_filter = 3;
+}
+
+message ListTenantsResponse {
+  repeated Tenant tenants = 1;
+  types.PageResponse pagination = 2;
+  bool success = 3;
+  string message = 4;
+}
+
+message ActivateTenantRequest {
+  string tenant_id = 1;
+}
+
+message ActivateTenantResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message DeactivateTenantRequest {
+  string tenant_id = 1;
+  string reason = 2;
+}
+
+message DeactivateTenantResponse {
+  bool success = 1;
+  string message = 2;
+}

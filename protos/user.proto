@@ -1,0 +1,62 @@
+syntax = "proto3";
+package user;
+option go_package="github.com/inidaname/mosque_location/protos";
+import "types.proto";
+
+service UserService {
+  rpc GetUserByID (GetUserByIDRequest) returns (GetUserByIDResponse);
+  rpc GetUserByEmail (GetUserByEmailRequest) returns (GetUserByEmailResponse);
+  rpc UpdateUser (UpdateUserRequest) returns (UpdateUserResponse);
+  rpc UpdateUserPassword (UpdateUserPasswordRequest) returns (UpdateUserPasswordResponse);
+  rpc DeleteUser (DeleteUserRequest) returns (DeleteUserResponse);
+}
+
+message GetUserByIDRequest {
+  string user_id = 1;
+}
+
+message GetUserByIDResponse {
+  types.User user = 1;
+}
+
+message GetUserByEmailRequest {
+  string email = 1;
+}
+
+message GetUserByEmailResponse {
+  types.User user = 1;
+}
+
+message UpdateUserRequest {
+  string user_id = 1;
+  string full_name = 2;
+}
+
+message UpdateUserPasswordRequest {
+  string user_id = 1;
+  string password = 2;
+}
+
+message UpdateUserPasswordResponse {
+  string success = 1;
+  types.User user = 2;
+}
+
+
+message UpdateUserEmailRequest {
+  string user_id = 1;
+  string email = 2;
+}
+
+message UpdateUserResponse {
+  string success = 1;
+  types.User user = 2;
+}
+
+message DeleteUserRequest {
+  string user_id = 1;
+}
+
+message DeleteUserResponse {
+  string success = 1;
+}

@@ -1,0 +1,224 @@
+syntax = "proto3";
+
+package analytic;
+
+import "protos/types.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/struct.proto";
+
+service AnalyticsService {
+  rpc GetSalesMetrics(GetSalesMetricsRequest) returns (GetSalesMetricsResponse);
+  rpc GetCustomerMetrics(GetCustomerMetricsRequest) returns (GetCustomerMetricsResponse);
+  rpc GetProductMetrics(GetProductMetricsRequest) returns (GetProductMetricsResponse);
+  rpc GetInventoryMetrics(GetInventoryMetricsRequest) returns (GetInventoryMetricsResponse);
+  rpc CreateReport(CreateReportRequest) returns (CreateReportResponse);
+  rpc GetReport(GetReportRequest) returns (GetReportResponse);
+  rpc ListReports(ListReportsRequest) returns (ListReportsResponse);
+}
+
+message MetricFilter {
+  google.protobuf.Timestamp start_date = 1;
+  google.protobuf.Timestamp end_date = 2;
+  repeated string product_ids = 3;
+  repeated string category_ids = 4;
+  repeated string customer_segments = 5;
+  map<string, string> custom_filters = 6;
+}
+
+message SalesMetrics {
+  double total_revenue = 1;
+  int32 total_orders = 2;
+  double average_order_value = 3;
+  int32 total_customers = 4;
+  double conversion_rate = 5;
+  repeated TimeSeriesData revenue_by_period = 6;
+  repeated ProductSalesData top_products = 7;
+}
+
+message TimeSeriesData {
+  google.protobuf.Timestamp timestamp = 1;
+  double value = 2;
+  map<string, double> dimensions = 3;
+}
+
+message ProductSalesData {
+  string product_id = 1;
+  string product_name = 2;
+  int32 quantity_sold = 3;
+  double revenue = 4;
+}
+
+message CustomerMetrics {
+  int32 total_customers = 1;
+  int32 new_customers = 2;
+  int32 returning_customers = 3;
+  double customer_retention_rate = 4;
+  double average_customer_lifetime_value = 5;
+  repeated TimeSeriesData customer_acquisition_by_period = 6;
+  repeated CustomerSegmentData customer_segments = 7;
+}
+
+message CustomerSegmentData {
+  string segment_name = 1;
+  int32 customer_count = 2;
+  double average_order_value = 3;
+  double total_revenue = 4;
+}
+
+message ProductMetrics {
+  int32 total_products = 1;
+  int32 active_products = 2;
+  double average_product_rating = 3;
+  repeated ProductPerformanceData product_performance = 4;
+  repeated CategoryMetricsData category_metrics = 5;
+}
+
+message ProductPerformanceData {
+  string product_id = 1;
+  string product_name = 2;
+  int32 views = 3;
+  int32 orders = 4;
+  double conversion_rate = 5;
+  double revenue = 6;
+  double rating = 7;
+}
+
+message CategoryMetricsData {
+  string category_id = 1;
+  string category_name = 2;
+  int32 product_count = 3;
+  double total_revenue = 4;
+  int32 total_orders = 5;
+}
+
+message InventoryMetrics {
+  int32 total_stock_items = 1;
+  int32 low_stock_items = 2;
+  int32 out_of_stock_items = 3;
+  double inventory_turnover_rate = 4;
+  repeated InventoryItemData inventory_status = 5;
+  repeated TimeSeriesData stock_levels_by_period = 6;
+}
+
+message InventoryItemData {
+  string product_id = 1;
+  string product_name = 2;
+  int32 current_stock = 3;
+  int32 reorder_level = 4;
+  double days_of_supply = 5;
+  string status = 6; // "in_stock", "low_stock", "out_of_stock"
+}
+
+message Report {
+  string report_id = 1;
+  string name = 2;
+  string description = 3;
+  ReportType type = 4;
+  ReportStatus status = 5;
+  google.protobuf.Timestamp created_at = 6;
+  google.protobuf.Timestamp updated_at = 7;
+  google.protobuf.Struct parameters = 8;
+  google.protobuf.Struct data = 9;
+}
+
+enum ReportType {
+  REPORT_TYPE_UNSPECIFIED = 0;
+  SALES_REPORT = 1;
+  CUSTOMER_REPORT = 2;
+  PRODUCT_REPORT = 3;
+  INVENTORY_REPORT = 4;
+  CUSTOM_REPORT = 5;
+}
+
+enum ReportStatus {
+  REPORT_STATUS_UNSPECIFIED = 0;
+  PENDING = 1;
+  PROCESSING = 2;
+  COMPLETED = 3;
+  FAILED = 4;
+}
+
+message GetSalesMetricsRequest {
+  types.TenantContext tenant_context = 1;
+  MetricFilter filter = 2;
+}
+
+message GetSalesMetricsResponse {
+  SalesMetrics metrics = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message GetCustomerMetricsRequest {
+  types.TenantContext tenant_context = 1;
+  MetricFilter filter = 2;
+}
+
+message GetCustomerMetricsResponse {
+  CustomerMetrics metrics = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message GetProductMetricsRequest {
+  types.TenantContext tenant_context = 1;
+  MetricFilter filter = 2;
+}
+
+message GetProductMetricsResponse {
+  ProductMetrics metrics = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message GetInventoryMetricsRequest {
+  types.TenantContext tenant_context = 1;
+  MetricFilter filter = 2;
+}
+
+message GetInventoryMetricsResponse {
+  InventoryMetrics metrics = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message CreateReportRequest {
+  types.TenantContext tenant_context = 1;
+  string name = 2;
+  string description = 3;
+  ReportType type = 4;
+  google.protobuf.Struct parameters = 5;
+}
+
+message CreateReportResponse {
+  string report_id = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message GetReportRequest {
+  types.TenantContext tenant_context = 1;
+  string report_id = 2;
+}
+
+message GetReportResponse {
+  Report report = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message ListReportsRequest {
+  types.TenantContext tenant_context = 1;
+  int32 page_size = 2;
+  string page_token = 3;
+  ReportType type_filter = 4;
+  ReportStatus status_filter = 5;
+}
+
+message ListReportsResponse {
+  repeated Report reports = 1;
+  string next_page_token = 2;
+  int32 total_count = 3;
+  bool success = 4;
+  string message = 5;
+}

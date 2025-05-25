@@ -1,0 +1,163 @@
+syntax = "proto3";
+
+package inventory;
+
+import "protos/types.proto";
+import "google/protobuf/timestamp.proto";
+
+service InventoryService {
+  rpc GetInventory(GetInventoryRequest) returns (GetInventoryResponse);
+  rpc UpdateInventory(UpdateInventoryRequest) returns (UpdateInventoryResponse);
+  rpc ReserveInventory(ReserveInventoryRequest) returns (ReserveInventoryResponse);
+  rpc ReleaseInventory(ReleaseInventoryRequest) returns (ReleaseInventoryResponse);
+  rpc ListInventoryMovements(ListInventoryMovementsRequest) returns (ListInventoryMovementsResponse);
+  rpc CreateWarehouse(CreateWarehouseRequest) returns (CreateWarehouseResponse);
+  rpc ListWarehouses(ListWarehousesRequest) returns (ListWarehousesResponse);
+}
+
+enum MovementType {
+  MOVEMENT_TYPE_UNSPECIFIED = 0;
+  MOVEMENT_TYPE_STOCK_IN = 1;
+  MOVEMENT_TYPE_STOCK_OUT = 2;
+  MOVEMENT_TYPE_ADJUSTMENT = 3;
+  MOVEMENT_TYPE_RESERVED = 4;
+  MOVEMENT_TYPE_RELEASED = 5;
+  MOVEMENT_TYPE_DAMAGED = 6;
+  MOVEMENT_TYPE_RETURNED = 7;
+}
+
+message InventoryItem {
+  string item_id = 1;
+  types.TenantContext tenant_context = 2;
+  string product_id = 3;
+  string variant_id = 4;
+  string warehouse_id = 5;
+  int32 available_quantity = 6;
+  int32 reserved_quantity = 7;
+  int32 total_quantity = 8;
+  double unit_cost = 9;
+  google.protobuf.Timestamp last_updated = 10;
+}
+
+message InventoryMovement {
+  string movement_id = 1;
+  types.TenantContext tenant_context = 2;
+  string product_id = 3;
+  string variant_id = 4;
+  string warehouse_id = 5;
+  MovementType type = 6;
+  int32 quantity = 7;
+  string reference_id = 8; // order_id, adjustment_id, etc.
+  string notes = 9;
+  google.protobuf.Timestamp created_at = 10;
+}
+
+message Warehouse {
+  string warehouse_id = 1;
+  types.TenantContext tenant_context = 2;
+  string name = 3;
+  string code = 4;
+  types.Address address = 5;
+  bool is_active = 6;
+  google.protobuf.Timestamp created_at = 7;
+}
+
+
+message GetInventoryRequest {
+  types.TenantContext tenant_context = 1;
+  string product_id = 2;
+  string variant_id = 3;
+  string warehouse_id = 4;
+}
+
+message GetInventoryResponse {
+  InventoryItem inventory = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message UpdateInventoryRequest {
+  types.TenantContext tenant_context = 1;
+  string product_id = 2;
+  string variant_id = 3;
+  string warehouse_id = 4;
+  int32 quantity_change = 5;
+  MovementType type = 6;
+  string reference_id = 7;
+  string notes = 8;
+}
+
+message UpdateInventoryResponse {
+  InventoryItem inventory = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message ReserveInventoryRequest {
+  types.TenantContext tenant_context = 1;
+  string product_id = 2;
+  string variant_id = 3;
+  string warehouse_id = 4;
+  int32 quantity = 5;
+  string order_id = 6;
+}
+
+message ReserveInventoryResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message ReleaseInventoryRequest {
+  types.TenantContext tenant_context = 1;
+  string product_id = 2;
+  string variant_id = 3;
+  string warehouse_id = 4;
+  int32 quantity = 5;
+  string order_id = 6;
+}
+
+message ReleaseInventoryResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message ListInventoryMovementsRequest {
+  types.TenantContext tenant_context = 1;
+  types.PageRequest pagination = 2;
+  string product_id = 3;
+  string warehouse_id = 4;
+  MovementType type_filter = 5;
+  google.protobuf.Timestamp start_date = 6;
+  google.protobuf.Timestamp end_date = 7;
+}
+
+message ListInventoryMovementsResponse {
+  repeated InventoryMovement movements = 1;
+  types.PageResponse pagination = 2;
+  bool success = 3;
+  string message = 4;
+}
+
+message CreateWarehouseRequest {
+  types.TenantContext tenant_context = 1;
+  Warehouse warehouse = 2;
+}
+
+message CreateWarehouseResponse {
+  Warehouse warehouse = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message ListWarehousesRequest {
+  types.TenantContext tenant_context = 1;
+  types.PageRequest pagination = 2;
+  bool active_only = 3;
+}
+
+message ListWarehousesResponse {
+  repeated Warehouse warehouses = 1;
+  types.PageResponse pagination = 2;
+  bool success = 3;
+  string message = 4;
+}

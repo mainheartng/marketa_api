@@ -1,0 +1,161 @@
+syntax = "proto3";
+
+package payment;
+
+import "protos/types.proto";
+import "google/protobuf/timestamp.proto";
+
+
+service PaymentService {
+  rpc CreatePaymentMethod(CreatePaymentMethodRequest) returns (CreatePaymentMethodResponse);
+  rpc GetPaymentMethod(GetPaymentMethodRequest) returns (GetPaymentMethodResponse);
+  rpc ListPaymentMethods(ListPaymentMethodsRequest) returns (ListPaymentMethodsResponse);
+  rpc ProcessPayment(ProcessPaymentRequest) returns (ProcessPaymentResponse);
+  rpc RefundPayment(RefundPaymentRequest) returns (RefundPaymentResponse);
+  rpc GetPaymentStatus(GetPaymentStatusRequest) returns (GetPaymentStatusResponse);
+  rpc ConfigurePaymentProvider(ConfigurePaymentProviderRequest) returns (ConfigurePaymentProviderResponse);
+}
+
+enum PaymentStatus {
+  PAYMENT_STATUS_UNSPECIFIED = 0;
+  PAYMENT_STATUS_PENDING = 1;
+  PAYMENT_STATUS_PROCESSING = 2;
+  PAYMENT_STATUS_COMPLETED = 3;
+  PAYMENT_STATUS_FAILED = 4;
+  PAYMENT_STATUS_CANCELLED = 5;
+  PAYMENT_STATUS_REFUNDED = 6;
+}
+
+enum PaymentMethodType {
+  PAYMENT_METHOD_TYPE_UNSPECIFIED = 0;
+  PAYMENT_METHOD_TYPE_CREDIT_CARD = 1;
+  PAYMENT_METHOD_TYPE_DEBIT_CARD = 2;
+  PAYMENT_METHOD_TYPE_BANK_TRANSFER = 3;
+  PAYMENT_METHOD_TYPE_DIGITAL_WALLET = 4;
+  PAYMENT_METHOD_TYPE_CRYPTOCURRENCY = 5;
+}
+
+message PaymentMethod {
+  string payment_method_id = 1;
+  types.TenantContext tenant_context = 2;
+  string customer_id = 3;
+  PaymentMethodType type = 4;
+  string provider = 5;
+  string external_id = 6;
+  map<string, string> metadata = 7;
+  bool is_default = 8;
+  types.Status status = 9;
+  google.protobuf.Timestamp created_at = 10;
+  google.protobuf.Timestamp expires_at = 11;
+}
+
+message Payment {
+  string payment_id = 1;
+  types.TenantContext tenant_context = 2;
+  string order_id = 3;
+  string payment_method_id = 4;
+  double amount = 5;
+  string currency = 6;
+  PaymentStatus status = 7;
+  string provider_transaction_id = 8;
+  string failure_reason = 9;
+  map<string, string> metadata = 10;
+  google.protobuf.Timestamp processed_at = 11;
+}
+
+message PaymentProvider {
+  string provider_id = 1;
+  string name = 2;
+  repeated PaymentMethodType supported_methods = 3;
+  map<string, string> configuration = 4;
+  bool is_active = 5;
+}
+
+
+// Payment Service Requests/Responses
+message ProcessPaymentRequest {
+  types.TenantContext tenant_context = 1;
+  string payment_method_id = 2;
+  double amount = 3;
+  string currency = 4;
+  string order_id = 5;
+  map<string, string> metadata = 6;
+}
+
+message ProcessPaymentResponse {
+  Payment payment = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message ConfigurePaymentProviderRequest {
+  types.TenantContext tenant_context = 1;
+  PaymentProvider provider = 2;
+}
+
+message ConfigurePaymentProviderResponse {
+  PaymentProvider provider = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+
+message CreatePaymentMethodRequest {
+  types.TenantContext tenant_context = 1;
+  PaymentMethod payment_method = 2;
+}
+
+message CreatePaymentMethodResponse {
+  PaymentMethod payment_method = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message GetPaymentMethodRequest {
+  types.TenantContext tenant_context = 1;
+  string payment_method_id = 2;
+}
+
+message GetPaymentMethodResponse {
+  PaymentMethod payment_method = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message ListPaymentMethodsRequest {
+  types.TenantContext tenant_context = 1;
+  string customer_id = 2;
+  PaymentMethodType type_filter = 3;
+  types.Status status_filter = 4;
+}
+
+message ListPaymentMethodsResponse {
+  repeated PaymentMethod payment_methods = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message RefundPaymentRequest {
+  types.TenantContext tenant_context = 1;
+  string payment_id = 2;
+  double amount = 3;
+  string reason = 4;
+}
+
+message RefundPaymentResponse {
+  Payment refund = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message GetPaymentStatusRequest {
+  types.TenantContext tenant_context = 1;
+  string payment_id = 2;
+}
+
+message GetPaymentStatusResponse {
+  Payment payment = 1;
+  bool success = 2;
+  string message = 3;
+}
+

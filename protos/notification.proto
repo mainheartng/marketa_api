@@ -1,0 +1,161 @@
+syntax = "proto3";
+
+package notification;
+
+import "protos/types.proto";
+import "google/protobuf/timestamp.proto";
+
+service NotificationService {
+  rpc SendNotification(SendNotificationRequest) returns (SendNotificationResponse);
+  rpc GetNotification(GetNotificationRequest) returns (GetNotificationResponse);
+  rpc ListNotifications(ListNotificationsRequest) returns (ListNotificationsResponse);
+  rpc MarkAsRead(MarkAsReadRequest) returns (MarkAsReadResponse);
+  rpc CreateTemplate(CreateTemplateRequest) returns (CreateTemplateResponse);
+  rpc UpdateTemplate(UpdateTemplateRequest) returns (UpdateTemplateResponse);
+  rpc ListTemplates(ListTemplatesRequest) returns (ListTemplatesResponse);
+  rpc ConfigureChannel(ConfigureChannelRequest) returns (ConfigureChannelResponse);
+}
+
+enum NotificationChannel {
+  NOTIFICATION_CHANNEL_UNSPECIFIED = 0;
+  NOTIFICATION_CHANNEL_EMAIL = 1;
+  NOTIFICATION_CHANNEL_SMS = 2;
+  NOTIFICATION_CHANNEL_PUSH = 3;
+  NOTIFICATION_CHANNEL_IN_APP = 4;
+  NOTIFICATION_CHANNEL_WEBHOOK = 5;
+}
+
+enum NotificationStatus {
+  NOTIFICATION_STATUS_UNSPECIFIED = 0;
+  NOTIFICATION_STATUS_PENDING = 1;
+  NOTIFICATION_STATUS_SENT = 2;
+  NOTIFICATION_STATUS_DELIVERED = 3;
+  NOTIFICATION_STATUS_FAILED = 4;
+  NOTIFICATION_STATUS_READ = 5;
+}
+
+message Notification {
+  string notification_id = 1;
+  types.TenantContext tenant_context = 2;
+  string recipient_id = 3;
+  NotificationChannel channel = 4;
+  string template_id = 5;
+  string subject = 6;
+  string content = 7;
+  NotificationStatus status = 8;
+  map<string, string> variables = 9;
+  map<string, string> metadata = 10;
+  google.protobuf.Timestamp created_at = 11;
+  google.protobuf.Timestamp sent_at = 12;
+  google.protobuf.Timestamp delivered_at = 13;
+  google.protobuf.Timestamp read_at = 14;
+}
+
+message NotificationTemplate {
+  string template_id = 1;
+  types.TenantContext tenant_context = 2;
+  string name = 3;
+  string subject = 4;
+  string content = 5;
+  NotificationChannel channel = 6;
+  repeated string variables = 7;
+  types.Status status = 8;
+  google.protobuf.Timestamp created_at = 9;
+  google.protobuf.Timestamp updated_at = 10;
+}
+
+
+message SendNotificationRequest {
+  types.TenantContext tenant_context = 1;
+  Notification notification = 2;
+}
+
+message SendNotificationResponse {
+  Notification notification = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message GetNotificationRequest {
+  types.TenantContext tenant_context = 1;
+  string notification_id = 2;
+}
+
+message GetNotificationResponse {
+  Notification notification = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message ListNotificationsRequest {
+  types.TenantContext tenant_context = 1;
+  types.PageRequest pagination = 2;
+  string recipient_id = 3;
+  NotificationChannel channel_filter = 4;
+  NotificationStatus status_filter = 5;
+}
+
+message ListNotificationsResponse {
+  repeated Notification notifications = 1;
+  types.PageResponse pagination = 2;
+  bool success = 3;
+  string message = 4;
+}
+
+message MarkAsReadRequest {
+  types.TenantContext tenant_context = 1;
+  string notification_id = 2;
+}
+
+message MarkAsReadResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message CreateTemplateRequest {
+  types.TenantContext tenant_context = 1;
+  NotificationTemplate template = 2;
+}
+
+message CreateTemplateResponse {
+  NotificationTemplate template = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message UpdateTemplateRequest {
+  types.TenantContext tenant_context = 1;
+  string template_id = 2;
+  NotificationTemplate template = 3;
+}
+
+message UpdateTemplateResponse {
+  NotificationTemplate template = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message ListTemplatesRequest {
+  types.TenantContext tenant_context = 1;
+  types.PageRequest pagination = 2;
+  NotificationChannel channel_filter = 3;
+  types.Status status_filter = 4;
+}
+
+message ListTemplatesResponse {
+  repeated NotificationTemplate templates = 1;
+  types.PageResponse pagination = 2;
+  bool success = 3;
+  string message = 4;
+}
+
+message ConfigureChannelRequest {
+  types.TenantContext tenant_context = 1;
+  NotificationChannel channel = 2;
+  map<string, string> configuration = 3;
+}
+
+message ConfigureChannelResponse {
+  bool success = 1;
+  string message = 2;
+}
