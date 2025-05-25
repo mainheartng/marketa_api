@@ -545,6 +545,398 @@ func (x *DeleteUserResponse) GetSuccess() string {
 	return ""
 }
 
+type ListUsersRequest struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	TenantContext  *TenantContext         `protobuf:"bytes,1,opt,name=tenant_context,json=tenantContext,proto3" json:"tenant_context,omitempty"`
+	Pagination     *PageRequest           `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
+	SearchQuery    string                 `protobuf:"bytes,3,opt,name=search_query,json=searchQuery,proto3" json:"search_query,omitempty"`
+	StatusFilter   Status                 `protobuf:"varint,4,opt,name=status_filter,json=statusFilter,proto3,enum=types.Status" json:"status_filter,omitempty"`
+	OrganizationId string                 `protobuf:"bytes,5,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *ListUsersRequest) Reset() {
+	*x = ListUsersRequest{}
+	mi := &file_protos_user_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListUsersRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListUsersRequest) ProtoMessage() {}
+
+func (x *ListUsersRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_protos_user_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListUsersRequest.ProtoReflect.Descriptor instead.
+func (*ListUsersRequest) Descriptor() ([]byte, []int) {
+	return file_protos_user_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *ListUsersRequest) GetTenantContext() *TenantContext {
+	if x != nil {
+		return x.TenantContext
+	}
+	return nil
+}
+
+func (x *ListUsersRequest) GetPagination() *PageRequest {
+	if x != nil {
+		return x.Pagination
+	}
+	return nil
+}
+
+func (x *ListUsersRequest) GetSearchQuery() string {
+	if x != nil {
+		return x.SearchQuery
+	}
+	return ""
+}
+
+func (x *ListUsersRequest) GetStatusFilter() Status {
+	if x != nil {
+		return x.StatusFilter
+	}
+	return Status_STATUS_UNSPECIFIED
+}
+
+func (x *ListUsersRequest) GetOrganizationId() string {
+	if x != nil {
+		return x.OrganizationId
+	}
+	return ""
+}
+
+type ListUsersResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Users         []*User                `protobuf:"bytes,1,rep,name=users,proto3" json:"users,omitempty"`
+	Pagination    *PageResponse          `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
+	Success       bool                   `protobuf:"varint,3,opt,name=success,proto3" json:"success,omitempty"`
+	Message       string                 `protobuf:"bytes,4,opt,name=message,proto3" json:"message,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListUsersResponse) Reset() {
+	*x = ListUsersResponse{}
+	mi := &file_protos_user_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListUsersResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListUsersResponse) ProtoMessage() {}
+
+func (x *ListUsersResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_protos_user_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListUsersResponse.ProtoReflect.Descriptor instead.
+func (*ListUsersResponse) Descriptor() ([]byte, []int) {
+	return file_protos_user_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *ListUsersResponse) GetUsers() []*User {
+	if x != nil {
+		return x.Users
+	}
+	return nil
+}
+
+func (x *ListUsersResponse) GetPagination() *PageResponse {
+	if x != nil {
+		return x.Pagination
+	}
+	return nil
+}
+
+func (x *ListUsersResponse) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
+func (x *ListUsersResponse) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
+type AssignRoleRequest struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	TenantContext  *TenantContext         `protobuf:"bytes,1,opt,name=tenant_context,json=tenantContext,proto3" json:"tenant_context,omitempty"`
+	UserId         string                 `protobuf:"bytes,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	OrganizationId string                 `protobuf:"bytes,3,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
+	RoleName       string                 `protobuf:"bytes,4,opt,name=role_name,json=roleName,proto3" json:"role_name,omitempty"`
+	Permissions    []string               `protobuf:"bytes,5,rep,name=permissions,proto3" json:"permissions,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *AssignRoleRequest) Reset() {
+	*x = AssignRoleRequest{}
+	mi := &file_protos_user_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AssignRoleRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AssignRoleRequest) ProtoMessage() {}
+
+func (x *AssignRoleRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_protos_user_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AssignRoleRequest.ProtoReflect.Descriptor instead.
+func (*AssignRoleRequest) Descriptor() ([]byte, []int) {
+	return file_protos_user_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *AssignRoleRequest) GetTenantContext() *TenantContext {
+	if x != nil {
+		return x.TenantContext
+	}
+	return nil
+}
+
+func (x *AssignRoleRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *AssignRoleRequest) GetOrganizationId() string {
+	if x != nil {
+		return x.OrganizationId
+	}
+	return ""
+}
+
+func (x *AssignRoleRequest) GetRoleName() string {
+	if x != nil {
+		return x.RoleName
+	}
+	return ""
+}
+
+func (x *AssignRoleRequest) GetPermissions() []string {
+	if x != nil {
+		return x.Permissions
+	}
+	return nil
+}
+
+type AssignRoleResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AssignRoleResponse) Reset() {
+	*x = AssignRoleResponse{}
+	mi := &file_protos_user_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AssignRoleResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AssignRoleResponse) ProtoMessage() {}
+
+func (x *AssignRoleResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_protos_user_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AssignRoleResponse.ProtoReflect.Descriptor instead.
+func (*AssignRoleResponse) Descriptor() ([]byte, []int) {
+	return file_protos_user_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *AssignRoleResponse) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
+func (x *AssignRoleResponse) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
+type RevokeRoleRequest struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	TenantContext  *TenantContext         `protobuf:"bytes,1,opt,name=tenant_context,json=tenantContext,proto3" json:"tenant_context,omitempty"`
+	UserId         string                 `protobuf:"bytes,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	OrganizationId string                 `protobuf:"bytes,3,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
+	RoleName       string                 `protobuf:"bytes,4,opt,name=role_name,json=roleName,proto3" json:"role_name,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *RevokeRoleRequest) Reset() {
+	*x = RevokeRoleRequest{}
+	mi := &file_protos_user_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RevokeRoleRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RevokeRoleRequest) ProtoMessage() {}
+
+func (x *RevokeRoleRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_protos_user_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RevokeRoleRequest.ProtoReflect.Descriptor instead.
+func (*RevokeRoleRequest) Descriptor() ([]byte, []int) {
+	return file_protos_user_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *RevokeRoleRequest) GetTenantContext() *TenantContext {
+	if x != nil {
+		return x.TenantContext
+	}
+	return nil
+}
+
+func (x *RevokeRoleRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *RevokeRoleRequest) GetOrganizationId() string {
+	if x != nil {
+		return x.OrganizationId
+	}
+	return ""
+}
+
+func (x *RevokeRoleRequest) GetRoleName() string {
+	if x != nil {
+		return x.RoleName
+	}
+	return ""
+}
+
+type RevokeRoleResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RevokeRoleResponse) Reset() {
+	*x = RevokeRoleResponse{}
+	mi := &file_protos_user_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RevokeRoleResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RevokeRoleResponse) ProtoMessage() {}
+
+func (x *RevokeRoleResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_protos_user_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RevokeRoleResponse.ProtoReflect.Descriptor instead.
+func (*RevokeRoleResponse) Descriptor() ([]byte, []int) {
+	return file_protos_user_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *RevokeRoleResponse) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
+func (x *RevokeRoleResponse) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
 var File_protos_user_proto protoreflect.FileDescriptor
 
 const file_protos_user_proto_rawDesc = "" +
@@ -576,7 +968,39 @@ const file_protos_user_proto_rawDesc = "" +
 	"\x11DeleteUserRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\".\n" +
 	"\x12DeleteUserResponse\x12\x18\n" +
-	"\asuccess\x18\x01 \x01(\tR\asuccess2\xf9\x02\n" +
+	"\asuccess\x18\x01 \x01(\tR\asuccess\"\x83\x02\n" +
+	"\x10ListUsersRequest\x12;\n" +
+	"\x0etenant_context\x18\x01 \x01(\v2\x14.types.TenantContextR\rtenantContext\x122\n" +
+	"\n" +
+	"pagination\x18\x02 \x01(\v2\x12.types.PageRequestR\n" +
+	"pagination\x12!\n" +
+	"\fsearch_query\x18\x03 \x01(\tR\vsearchQuery\x122\n" +
+	"\rstatus_filter\x18\x04 \x01(\x0e2\r.types.StatusR\fstatusFilter\x12'\n" +
+	"\x0forganization_id\x18\x05 \x01(\tR\x0eorganizationId\"\x9f\x01\n" +
+	"\x11ListUsersResponse\x12!\n" +
+	"\x05users\x18\x01 \x03(\v2\v.types.UserR\x05users\x123\n" +
+	"\n" +
+	"pagination\x18\x02 \x01(\v2\x13.types.PageResponseR\n" +
+	"pagination\x12\x18\n" +
+	"\asuccess\x18\x03 \x01(\bR\asuccess\x12\x18\n" +
+	"\amessage\x18\x04 \x01(\tR\amessage\"\xd1\x01\n" +
+	"\x11AssignRoleRequest\x12;\n" +
+	"\x0etenant_context\x18\x01 \x01(\v2\x14.types.TenantContextR\rtenantContext\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\tR\x06userId\x12'\n" +
+	"\x0forganization_id\x18\x03 \x01(\tR\x0eorganizationId\x12\x1b\n" +
+	"\trole_name\x18\x04 \x01(\tR\broleName\x12 \n" +
+	"\vpermissions\x18\x05 \x03(\tR\vpermissions\"H\n" +
+	"\x12AssignRoleResponse\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"\xaf\x01\n" +
+	"\x11RevokeRoleRequest\x12;\n" +
+	"\x0etenant_context\x18\x01 \x01(\v2\x14.types.TenantContextR\rtenantContext\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\tR\x06userId\x12'\n" +
+	"\x0forganization_id\x18\x03 \x01(\tR\x0eorganizationId\x12\x1b\n" +
+	"\trole_name\x18\x04 \x01(\tR\broleName\"H\n" +
+	"\x12RevokeRoleResponse\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage2\xb9\x04\n" +
 	"\vUserService\x12B\n" +
 	"\vGetUserByID\x12\x18.user.GetUserByIDRequest\x1a\x19.user.GetUserByIDResponse\x12K\n" +
 	"\x0eGetUserByEmail\x12\x1b.user.GetUserByEmailRequest\x1a\x1c.user.GetUserByEmailResponse\x12?\n" +
@@ -584,7 +1008,12 @@ const file_protos_user_proto_rawDesc = "" +
 	"UpdateUser\x12\x17.user.UpdateUserRequest\x1a\x18.user.UpdateUserResponse\x12W\n" +
 	"\x12UpdateUserPassword\x12\x1f.user.UpdateUserPasswordRequest\x1a .user.UpdateUserPasswordResponse\x12?\n" +
 	"\n" +
-	"DeleteUser\x12\x17.user.DeleteUserRequest\x1a\x18.user.DeleteUserResponseB2Z0github.com/mainheartng/marketa_api/protos;protosb\x06proto3"
+	"DeleteUser\x12\x17.user.DeleteUserRequest\x1a\x18.user.DeleteUserResponse\x12<\n" +
+	"\tListUsers\x12\x16.user.ListUsersRequest\x1a\x17.user.ListUsersResponse\x12?\n" +
+	"\n" +
+	"AssignRole\x12\x17.user.AssignRoleRequest\x1a\x18.user.AssignRoleResponse\x12?\n" +
+	"\n" +
+	"RevokeRole\x12\x17.user.RevokeRoleRequest\x1a\x18.user.RevokeRoleResponseB2Z0github.com/mainheartng/marketa_api/protos;protosb\x06proto3"
 
 var (
 	file_protos_user_proto_rawDescOnce sync.Once
@@ -598,7 +1027,7 @@ func file_protos_user_proto_rawDescGZIP() []byte {
 	return file_protos_user_proto_rawDescData
 }
 
-var file_protos_user_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
+var file_protos_user_proto_msgTypes = make([]protoimpl.MessageInfo, 17)
 var file_protos_user_proto_goTypes = []any{
 	(*GetUserByIDRequest)(nil),         // 0: user.GetUserByIDRequest
 	(*GetUserByIDResponse)(nil),        // 1: user.GetUserByIDResponse
@@ -611,28 +1040,51 @@ var file_protos_user_proto_goTypes = []any{
 	(*UpdateUserResponse)(nil),         // 8: user.UpdateUserResponse
 	(*DeleteUserRequest)(nil),          // 9: user.DeleteUserRequest
 	(*DeleteUserResponse)(nil),         // 10: user.DeleteUserResponse
-	(*User)(nil),                       // 11: types.User
+	(*ListUsersRequest)(nil),           // 11: user.ListUsersRequest
+	(*ListUsersResponse)(nil),          // 12: user.ListUsersResponse
+	(*AssignRoleRequest)(nil),          // 13: user.AssignRoleRequest
+	(*AssignRoleResponse)(nil),         // 14: user.AssignRoleResponse
+	(*RevokeRoleRequest)(nil),          // 15: user.RevokeRoleRequest
+	(*RevokeRoleResponse)(nil),         // 16: user.RevokeRoleResponse
+	(*User)(nil),                       // 17: types.User
+	(*TenantContext)(nil),              // 18: types.TenantContext
+	(*PageRequest)(nil),                // 19: types.PageRequest
+	(Status)(0),                        // 20: types.Status
+	(*PageResponse)(nil),               // 21: types.PageResponse
 }
 var file_protos_user_proto_depIdxs = []int32{
-	11, // 0: user.GetUserByIDResponse.user:type_name -> types.User
-	11, // 1: user.GetUserByEmailResponse.user:type_name -> types.User
-	11, // 2: user.UpdateUserPasswordResponse.user:type_name -> types.User
-	11, // 3: user.UpdateUserResponse.user:type_name -> types.User
-	0,  // 4: user.UserService.GetUserByID:input_type -> user.GetUserByIDRequest
-	2,  // 5: user.UserService.GetUserByEmail:input_type -> user.GetUserByEmailRequest
-	4,  // 6: user.UserService.UpdateUser:input_type -> user.UpdateUserRequest
-	5,  // 7: user.UserService.UpdateUserPassword:input_type -> user.UpdateUserPasswordRequest
-	9,  // 8: user.UserService.DeleteUser:input_type -> user.DeleteUserRequest
-	1,  // 9: user.UserService.GetUserByID:output_type -> user.GetUserByIDResponse
-	3,  // 10: user.UserService.GetUserByEmail:output_type -> user.GetUserByEmailResponse
-	8,  // 11: user.UserService.UpdateUser:output_type -> user.UpdateUserResponse
-	6,  // 12: user.UserService.UpdateUserPassword:output_type -> user.UpdateUserPasswordResponse
-	10, // 13: user.UserService.DeleteUser:output_type -> user.DeleteUserResponse
-	9,  // [9:14] is the sub-list for method output_type
-	4,  // [4:9] is the sub-list for method input_type
-	4,  // [4:4] is the sub-list for extension type_name
-	4,  // [4:4] is the sub-list for extension extendee
-	0,  // [0:4] is the sub-list for field type_name
+	17, // 0: user.GetUserByIDResponse.user:type_name -> types.User
+	17, // 1: user.GetUserByEmailResponse.user:type_name -> types.User
+	17, // 2: user.UpdateUserPasswordResponse.user:type_name -> types.User
+	17, // 3: user.UpdateUserResponse.user:type_name -> types.User
+	18, // 4: user.ListUsersRequest.tenant_context:type_name -> types.TenantContext
+	19, // 5: user.ListUsersRequest.pagination:type_name -> types.PageRequest
+	20, // 6: user.ListUsersRequest.status_filter:type_name -> types.Status
+	17, // 7: user.ListUsersResponse.users:type_name -> types.User
+	21, // 8: user.ListUsersResponse.pagination:type_name -> types.PageResponse
+	18, // 9: user.AssignRoleRequest.tenant_context:type_name -> types.TenantContext
+	18, // 10: user.RevokeRoleRequest.tenant_context:type_name -> types.TenantContext
+	0,  // 11: user.UserService.GetUserByID:input_type -> user.GetUserByIDRequest
+	2,  // 12: user.UserService.GetUserByEmail:input_type -> user.GetUserByEmailRequest
+	4,  // 13: user.UserService.UpdateUser:input_type -> user.UpdateUserRequest
+	5,  // 14: user.UserService.UpdateUserPassword:input_type -> user.UpdateUserPasswordRequest
+	9,  // 15: user.UserService.DeleteUser:input_type -> user.DeleteUserRequest
+	11, // 16: user.UserService.ListUsers:input_type -> user.ListUsersRequest
+	13, // 17: user.UserService.AssignRole:input_type -> user.AssignRoleRequest
+	15, // 18: user.UserService.RevokeRole:input_type -> user.RevokeRoleRequest
+	1,  // 19: user.UserService.GetUserByID:output_type -> user.GetUserByIDResponse
+	3,  // 20: user.UserService.GetUserByEmail:output_type -> user.GetUserByEmailResponse
+	8,  // 21: user.UserService.UpdateUser:output_type -> user.UpdateUserResponse
+	6,  // 22: user.UserService.UpdateUserPassword:output_type -> user.UpdateUserPasswordResponse
+	10, // 23: user.UserService.DeleteUser:output_type -> user.DeleteUserResponse
+	12, // 24: user.UserService.ListUsers:output_type -> user.ListUsersResponse
+	14, // 25: user.UserService.AssignRole:output_type -> user.AssignRoleResponse
+	16, // 26: user.UserService.RevokeRole:output_type -> user.RevokeRoleResponse
+	19, // [19:27] is the sub-list for method output_type
+	11, // [11:19] is the sub-list for method input_type
+	11, // [11:11] is the sub-list for extension type_name
+	11, // [11:11] is the sub-list for extension extendee
+	0,  // [0:11] is the sub-list for field type_name
 }
 
 func init() { file_protos_user_proto_init() }
@@ -647,7 +1099,7 @@ func file_protos_user_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_protos_user_proto_rawDesc), len(file_protos_user_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   11,
+			NumMessages:   17,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

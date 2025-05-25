@@ -757,6 +757,142 @@ func (x *ChangePasswordRequest) GetNewPassword() string {
 	return ""
 }
 
+type AuthenticateUserRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	TenantId      string                 `protobuf:"bytes,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	Email         string                 `protobuf:"bytes,2,opt,name=email,proto3" json:"email,omitempty"`
+	Password      string                 `protobuf:"bytes,3,opt,name=password,proto3" json:"password,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AuthenticateUserRequest) Reset() {
+	*x = AuthenticateUserRequest{}
+	mi := &file_protos_auth_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AuthenticateUserRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AuthenticateUserRequest) ProtoMessage() {}
+
+func (x *AuthenticateUserRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_protos_auth_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AuthenticateUserRequest.ProtoReflect.Descriptor instead.
+func (*AuthenticateUserRequest) Descriptor() ([]byte, []int) {
+	return file_protos_auth_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *AuthenticateUserRequest) GetTenantId() string {
+	if x != nil {
+		return x.TenantId
+	}
+	return ""
+}
+
+func (x *AuthenticateUserRequest) GetEmail() string {
+	if x != nil {
+		return x.Email
+	}
+	return ""
+}
+
+func (x *AuthenticateUserRequest) GetPassword() string {
+	if x != nil {
+		return x.Password
+	}
+	return ""
+}
+
+type AuthenticateUserResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	User          *User                  `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
+	AccessToken   string                 `protobuf:"bytes,2,opt,name=access_token,json=accessToken,proto3" json:"access_token,omitempty"`
+	RefreshToken  string                 `protobuf:"bytes,3,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token,omitempty"`
+	Success       bool                   `protobuf:"varint,4,opt,name=success,proto3" json:"success,omitempty"`
+	Message       string                 `protobuf:"bytes,5,opt,name=message,proto3" json:"message,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AuthenticateUserResponse) Reset() {
+	*x = AuthenticateUserResponse{}
+	mi := &file_protos_auth_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AuthenticateUserResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AuthenticateUserResponse) ProtoMessage() {}
+
+func (x *AuthenticateUserResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_protos_auth_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AuthenticateUserResponse.ProtoReflect.Descriptor instead.
+func (*AuthenticateUserResponse) Descriptor() ([]byte, []int) {
+	return file_protos_auth_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *AuthenticateUserResponse) GetUser() *User {
+	if x != nil {
+		return x.User
+	}
+	return nil
+}
+
+func (x *AuthenticateUserResponse) GetAccessToken() string {
+	if x != nil {
+		return x.AccessToken
+	}
+	return ""
+}
+
+func (x *AuthenticateUserResponse) GetRefreshToken() string {
+	if x != nil {
+		return x.RefreshToken
+	}
+	return ""
+}
+
+func (x *AuthenticateUserResponse) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
+func (x *AuthenticateUserResponse) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
 var File_protos_auth_proto protoreflect.FileDescriptor
 
 const file_protos_auth_proto_rawDesc = "" +
@@ -805,12 +941,23 @@ const file_protos_auth_proto_rawDesc = "" +
 	"\x15ChangePasswordRequest\x12\x14\n" +
 	"\x05email\x18\x01 \x01(\tR\x05email\x12!\n" +
 	"\fold_password\x18\x02 \x01(\tR\voldPassword\x12!\n" +
-	"\fnew_password\x18\x03 \x01(\tR\vnewPassword2\xb1\x04\n" +
+	"\fnew_password\x18\x03 \x01(\tR\vnewPassword\"h\n" +
+	"\x17AuthenticateUserRequest\x12\x1b\n" +
+	"\ttenant_id\x18\x01 \x01(\tR\btenantId\x12\x14\n" +
+	"\x05email\x18\x02 \x01(\tR\x05email\x12\x1a\n" +
+	"\bpassword\x18\x03 \x01(\tR\bpassword\"\xb7\x01\n" +
+	"\x18AuthenticateUserResponse\x12\x1f\n" +
+	"\x04user\x18\x01 \x01(\v2\v.types.UserR\x04user\x12!\n" +
+	"\faccess_token\x18\x02 \x01(\tR\vaccessToken\x12#\n" +
+	"\rrefresh_token\x18\x03 \x01(\tR\frefreshToken\x12\x18\n" +
+	"\asuccess\x18\x04 \x01(\bR\asuccess\x12\x18\n" +
+	"\amessage\x18\x05 \x01(\tR\amessage2\x84\x05\n" +
 	"\vAuthService\x12E\n" +
 	"\fRegisterUser\x12\x19.auth.RegisterUserRequest\x1a\x1a.auth.RegisterUserResponse\x12<\n" +
 	"\tLoginUser\x12\x16.auth.LoginUserRequest\x1a\x17.auth.LoginUserResponse\x12K\n" +
 	"\x0eForgotPassword\x12\x1b.auth.ForgotPasswordRequest\x1a\x1c.auth.ForgotPasswordResponse\x12`\n" +
-	"\x15ValidatePasswordToken\x12\".auth.ValidatePasswordTokenRequest\x1a#.auth.ValidatePasswordTokenResponse\x12`\n" +
+	"\x15ValidatePasswordToken\x12\".auth.ValidatePasswordTokenRequest\x1a#.auth.ValidatePasswordTokenResponse\x12Q\n" +
+	"\x10AuthenticateUser\x12\x1d.auth.AuthenticateUserRequest\x1a\x1e.auth.AuthenticateUserResponse\x12`\n" +
 	"\x15RequestPasswordChange\x12\".auth.RequestPasswordChangeRequest\x1a#.auth.RequestPasswordChangeResponse\x12K\n" +
 	"\x0eChangePassword\x12\x1b.auth.ChangePasswordRequest\x1a\x1c.auth.ChangePasswordResponse\x12?\n" +
 	"\n" +
@@ -828,7 +975,7 @@ func file_protos_auth_proto_rawDescGZIP() []byte {
 	return file_protos_auth_proto_rawDescData
 }
 
-var file_protos_auth_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
+var file_protos_auth_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
 var file_protos_auth_proto_goTypes = []any{
 	(*RegisterUserRequest)(nil),           // 0: auth.RegisterUserRequest
 	(*RegisterUserResponse)(nil),          // 1: auth.RegisterUserResponse
@@ -844,29 +991,34 @@ var file_protos_auth_proto_goTypes = []any{
 	(*LogoutUserResponse)(nil),            // 11: auth.LogoutUserResponse
 	(*ChangePasswordResponse)(nil),        // 12: auth.ChangePasswordResponse
 	(*ChangePasswordRequest)(nil),         // 13: auth.ChangePasswordRequest
-	(*User)(nil),                          // 14: types.User
+	(*AuthenticateUserRequest)(nil),       // 14: auth.AuthenticateUserRequest
+	(*AuthenticateUserResponse)(nil),      // 15: auth.AuthenticateUserResponse
+	(*User)(nil),                          // 16: types.User
 }
 var file_protos_auth_proto_depIdxs = []int32{
-	14, // 0: auth.RegisterUserResponse.user:type_name -> types.User
-	0,  // 1: auth.AuthService.RegisterUser:input_type -> auth.RegisterUserRequest
-	6,  // 2: auth.AuthService.LoginUser:input_type -> auth.LoginUserRequest
-	2,  // 3: auth.AuthService.ForgotPassword:input_type -> auth.ForgotPasswordRequest
-	4,  // 4: auth.AuthService.ValidatePasswordToken:input_type -> auth.ValidatePasswordTokenRequest
-	8,  // 5: auth.AuthService.RequestPasswordChange:input_type -> auth.RequestPasswordChangeRequest
-	13, // 6: auth.AuthService.ChangePassword:input_type -> auth.ChangePasswordRequest
-	10, // 7: auth.AuthService.LogoutUser:input_type -> auth.LogoutUserRequest
-	1,  // 8: auth.AuthService.RegisterUser:output_type -> auth.RegisterUserResponse
-	7,  // 9: auth.AuthService.LoginUser:output_type -> auth.LoginUserResponse
-	3,  // 10: auth.AuthService.ForgotPassword:output_type -> auth.ForgotPasswordResponse
-	5,  // 11: auth.AuthService.ValidatePasswordToken:output_type -> auth.ValidatePasswordTokenResponse
-	9,  // 12: auth.AuthService.RequestPasswordChange:output_type -> auth.RequestPasswordChangeResponse
-	12, // 13: auth.AuthService.ChangePassword:output_type -> auth.ChangePasswordResponse
-	11, // 14: auth.AuthService.LogoutUser:output_type -> auth.LogoutUserResponse
-	8,  // [8:15] is the sub-list for method output_type
-	1,  // [1:8] is the sub-list for method input_type
-	1,  // [1:1] is the sub-list for extension type_name
-	1,  // [1:1] is the sub-list for extension extendee
-	0,  // [0:1] is the sub-list for field type_name
+	16, // 0: auth.RegisterUserResponse.user:type_name -> types.User
+	16, // 1: auth.AuthenticateUserResponse.user:type_name -> types.User
+	0,  // 2: auth.AuthService.RegisterUser:input_type -> auth.RegisterUserRequest
+	6,  // 3: auth.AuthService.LoginUser:input_type -> auth.LoginUserRequest
+	2,  // 4: auth.AuthService.ForgotPassword:input_type -> auth.ForgotPasswordRequest
+	4,  // 5: auth.AuthService.ValidatePasswordToken:input_type -> auth.ValidatePasswordTokenRequest
+	14, // 6: auth.AuthService.AuthenticateUser:input_type -> auth.AuthenticateUserRequest
+	8,  // 7: auth.AuthService.RequestPasswordChange:input_type -> auth.RequestPasswordChangeRequest
+	13, // 8: auth.AuthService.ChangePassword:input_type -> auth.ChangePasswordRequest
+	10, // 9: auth.AuthService.LogoutUser:input_type -> auth.LogoutUserRequest
+	1,  // 10: auth.AuthService.RegisterUser:output_type -> auth.RegisterUserResponse
+	7,  // 11: auth.AuthService.LoginUser:output_type -> auth.LoginUserResponse
+	3,  // 12: auth.AuthService.ForgotPassword:output_type -> auth.ForgotPasswordResponse
+	5,  // 13: auth.AuthService.ValidatePasswordToken:output_type -> auth.ValidatePasswordTokenResponse
+	15, // 14: auth.AuthService.AuthenticateUser:output_type -> auth.AuthenticateUserResponse
+	9,  // 15: auth.AuthService.RequestPasswordChange:output_type -> auth.RequestPasswordChangeResponse
+	12, // 16: auth.AuthService.ChangePassword:output_type -> auth.ChangePasswordResponse
+	11, // 17: auth.AuthService.LogoutUser:output_type -> auth.LogoutUserResponse
+	10, // [10:18] is the sub-list for method output_type
+	2,  // [2:10] is the sub-list for method input_type
+	2,  // [2:2] is the sub-list for extension type_name
+	2,  // [2:2] is the sub-list for extension extendee
+	0,  // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_protos_auth_proto_init() }
@@ -882,7 +1034,7 @@ func file_protos_auth_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_protos_auth_proto_rawDesc), len(file_protos_auth_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   14,
+			NumMessages:   16,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

@@ -11,6 +11,7 @@ service AuthService {
   rpc LoginUser (LoginUserRequest) returns (LoginUserResponse);
   rpc ForgotPassword (ForgotPasswordRequest) returns (ForgotPasswordResponse);
   rpc ValidatePasswordToken (ValidatePasswordTokenRequest) returns (ValidatePasswordTokenResponse);
+  rpc AuthenticateUser(AuthenticateUserRequest) returns (AuthenticateUserResponse);
   rpc RequestPasswordChange (RequestPasswordChangeRequest) returns (RequestPasswordChangeResponse);
   rpc ChangePassword (ChangePasswordRequest) returns (ChangePasswordResponse);
   rpc LogoutUser (LogoutUserRequest) returns (LogoutUserResponse);
@@ -85,4 +86,18 @@ message ChangePasswordRequest {
   string email = 1;
   string old_password = 2;
   string new_password = 3;
+}
+
+message AuthenticateUserRequest {
+  string tenant_id = 1;
+  string email = 2;
+  string password = 3;
+}
+
+message AuthenticateUserResponse {
+  types.User user = 1;
+  string access_token = 2;
+  string refresh_token = 3;
+  bool success = 4;
+  string message = 5;
 }

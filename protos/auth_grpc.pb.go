@@ -23,6 +23,7 @@ const (
 	AuthService_LoginUser_FullMethodName             = "/auth.AuthService/LoginUser"
 	AuthService_ForgotPassword_FullMethodName        = "/auth.AuthService/ForgotPassword"
 	AuthService_ValidatePasswordToken_FullMethodName = "/auth.AuthService/ValidatePasswordToken"
+	AuthService_AuthenticateUser_FullMethodName      = "/auth.AuthService/AuthenticateUser"
 	AuthService_RequestPasswordChange_FullMethodName = "/auth.AuthService/RequestPasswordChange"
 	AuthService_ChangePassword_FullMethodName        = "/auth.AuthService/ChangePassword"
 	AuthService_LogoutUser_FullMethodName            = "/auth.AuthService/LogoutUser"
@@ -36,6 +37,7 @@ type AuthServiceClient interface {
 	LoginUser(ctx context.Context, in *LoginUserRequest, opts ...grpc.CallOption) (*LoginUserResponse, error)
 	ForgotPassword(ctx context.Context, in *ForgotPasswordRequest, opts ...grpc.CallOption) (*ForgotPasswordResponse, error)
 	ValidatePasswordToken(ctx context.Context, in *ValidatePasswordTokenRequest, opts ...grpc.CallOption) (*ValidatePasswordTokenResponse, error)
+	AuthenticateUser(ctx context.Context, in *AuthenticateUserRequest, opts ...grpc.CallOption) (*AuthenticateUserResponse, error)
 	RequestPasswordChange(ctx context.Context, in *RequestPasswordChangeRequest, opts ...grpc.CallOption) (*RequestPasswordChangeResponse, error)
 	ChangePassword(ctx context.Context, in *ChangePasswordRequest, opts ...grpc.CallOption) (*ChangePasswordResponse, error)
 	LogoutUser(ctx context.Context, in *LogoutUserRequest, opts ...grpc.CallOption) (*LogoutUserResponse, error)
@@ -89,6 +91,16 @@ func (c *authServiceClient) ValidatePasswordToken(ctx context.Context, in *Valid
 	return out, nil
 }
 
+func (c *authServiceClient) AuthenticateUser(ctx context.Context, in *AuthenticateUserRequest, opts ...grpc.CallOption) (*AuthenticateUserResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AuthenticateUserResponse)
+	err := c.cc.Invoke(ctx, AuthService_AuthenticateUser_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *authServiceClient) RequestPasswordChange(ctx context.Context, in *RequestPasswordChangeRequest, opts ...grpc.CallOption) (*RequestPasswordChangeResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(RequestPasswordChangeResponse)
@@ -127,6 +139,7 @@ type AuthServiceServer interface {
 	LoginUser(context.Context, *LoginUserRequest) (*LoginUserResponse, error)
 	ForgotPassword(context.Context, *ForgotPasswordRequest) (*ForgotPasswordResponse, error)
 	ValidatePasswordToken(context.Context, *ValidatePasswordTokenRequest) (*ValidatePasswordTokenResponse, error)
+	AuthenticateUser(context.Context, *AuthenticateUserRequest) (*AuthenticateUserResponse, error)
 	RequestPasswordChange(context.Context, *RequestPasswordChangeRequest) (*RequestPasswordChangeResponse, error)
 	ChangePassword(context.Context, *ChangePasswordRequest) (*ChangePasswordResponse, error)
 	LogoutUser(context.Context, *LogoutUserRequest) (*LogoutUserResponse, error)
@@ -151,6 +164,9 @@ func (UnimplementedAuthServiceServer) ForgotPassword(context.Context, *ForgotPas
 }
 func (UnimplementedAuthServiceServer) ValidatePasswordToken(context.Context, *ValidatePasswordTokenRequest) (*ValidatePasswordTokenResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ValidatePasswordToken not implemented")
+}
+func (UnimplementedAuthServiceServer) AuthenticateUser(context.Context, *AuthenticateUserRequest) (*AuthenticateUserResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AuthenticateUser not implemented")
 }
 func (UnimplementedAuthServiceServer) RequestPasswordChange(context.Context, *RequestPasswordChangeRequest) (*RequestPasswordChangeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RequestPasswordChange not implemented")
@@ -254,6 +270,24 @@ func _AuthService_ValidatePasswordToken_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AuthService_AuthenticateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AuthenticateUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).AuthenticateUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthService_AuthenticateUser_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).AuthenticateUser(ctx, req.(*AuthenticateUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _AuthService_RequestPasswordChange_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(RequestPasswordChangeRequest)
 	if err := dec(in); err != nil {
@@ -330,6 +364,10 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ValidatePasswordToken",
 			Handler:    _AuthService_ValidatePasswordToken_Handler,
+		},
+		{
+			MethodName: "AuthenticateUser",
+			Handler:    _AuthService_AuthenticateUser_Handler,
 		},
 		{
 			MethodName: "RequestPasswordChange",
