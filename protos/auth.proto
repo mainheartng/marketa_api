@@ -21,15 +21,20 @@ message RegisterUserRequest {
   string email = 1;
   string password = 2;
   optional string phone = 3;
-  string full_name = 4;
+  string first_name = 4;
+  string last_name = 5;
+  types.TenantContext tenant_context = 6;
 }
 
 message RegisterUserResponse {
   types.User user = 1;
+  bool success = 2;
+  string message = 3;
 }
 
 message ForgotPasswordRequest {
   string email = 1;
+  types.TenantContext tenant_context = 2;
 }
 
 message ForgotPasswordResponse {
@@ -39,6 +44,7 @@ message ForgotPasswordResponse {
 
 message ValidatePasswordTokenRequest {
   string token = 1;
+  types.TenantContext tenant_context = 2;
 }
 
 message ValidatePasswordTokenResponse {
@@ -50,16 +56,20 @@ message ValidatePasswordTokenResponse {
 message LoginUserRequest {
   string email = 1;
   string password = 2;
+  string tenant_id = 3;
 }
 
 message LoginUserResponse {
   string message = 1;
   bool success = 2;
+  string access_token = 3;
+  string refresh_token = 4;
 }
 
 message RequestPasswordChangeRequest {
   string email = 1;
   string password = 2;
+  string tenant_id = 3;
 }
 
 message RequestPasswordChangeResponse {
@@ -70,6 +80,7 @@ message RequestPasswordChangeResponse {
 message LogoutUserRequest {
   string email = 1;
   string password = 2;
+  string tenant_id = 3;
 }
 
 message LogoutUserResponse {
@@ -86,6 +97,7 @@ message ChangePasswordRequest {
   string email = 1;
   string old_password = 2;
   string new_password = 3;
+  string tenant_id = 4;
 }
 
 message AuthenticateUserRequest {

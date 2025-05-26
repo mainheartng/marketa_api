@@ -26,7 +26,9 @@ type RegisterUserRequest struct {
 	Email         string                 `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
 	Password      string                 `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
 	Phone         *string                `protobuf:"bytes,3,opt,name=phone,proto3,oneof" json:"phone,omitempty"`
-	FullName      string                 `protobuf:"bytes,4,opt,name=full_name,json=fullName,proto3" json:"full_name,omitempty"`
+	FirstName     string                 `protobuf:"bytes,4,opt,name=first_name,json=firstName,proto3" json:"first_name,omitempty"`
+	LastName      string                 `protobuf:"bytes,5,opt,name=last_name,json=lastName,proto3" json:"last_name,omitempty"`
+	TenantContext *TenantContext         `protobuf:"bytes,6,opt,name=tenant_context,json=tenantContext,proto3" json:"tenant_context,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -82,16 +84,32 @@ func (x *RegisterUserRequest) GetPhone() string {
 	return ""
 }
 
-func (x *RegisterUserRequest) GetFullName() string {
+func (x *RegisterUserRequest) GetFirstName() string {
 	if x != nil {
-		return x.FullName
+		return x.FirstName
 	}
 	return ""
+}
+
+func (x *RegisterUserRequest) GetLastName() string {
+	if x != nil {
+		return x.LastName
+	}
+	return ""
+}
+
+func (x *RegisterUserRequest) GetTenantContext() *TenantContext {
+	if x != nil {
+		return x.TenantContext
+	}
+	return nil
 }
 
 type RegisterUserResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	User          *User                  `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
+	Success       bool                   `protobuf:"varint,2,opt,name=success,proto3" json:"success,omitempty"`
+	Message       string                 `protobuf:"bytes,3,opt,name=message,proto3" json:"message,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -133,9 +151,24 @@ func (x *RegisterUserResponse) GetUser() *User {
 	return nil
 }
 
+func (x *RegisterUserResponse) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
+func (x *RegisterUserResponse) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
 type ForgotPasswordRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Email         string                 `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
+	TenantContext *TenantContext         `protobuf:"bytes,2,opt,name=tenant_context,json=tenantContext,proto3" json:"tenant_context,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -175,6 +208,13 @@ func (x *ForgotPasswordRequest) GetEmail() string {
 		return x.Email
 	}
 	return ""
+}
+
+func (x *ForgotPasswordRequest) GetTenantContext() *TenantContext {
+	if x != nil {
+		return x.TenantContext
+	}
+	return nil
 }
 
 type ForgotPasswordResponse struct {
@@ -232,6 +272,7 @@ func (x *ForgotPasswordResponse) GetSuccess() bool {
 type ValidatePasswordTokenRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Token         string                 `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
+	TenantContext *TenantContext         `protobuf:"bytes,2,opt,name=tenant_context,json=tenantContext,proto3" json:"tenant_context,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -271,6 +312,13 @@ func (x *ValidatePasswordTokenRequest) GetToken() string {
 		return x.Token
 	}
 	return ""
+}
+
+func (x *ValidatePasswordTokenRequest) GetTenantContext() *TenantContext {
+	if x != nil {
+		return x.TenantContext
+	}
+	return nil
 }
 
 type ValidatePasswordTokenResponse struct {
@@ -337,6 +385,7 @@ type LoginUserRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Email         string                 `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
 	Password      string                 `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
+	TenantId      string                 `protobuf:"bytes,3,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -385,10 +434,19 @@ func (x *LoginUserRequest) GetPassword() string {
 	return ""
 }
 
+func (x *LoginUserRequest) GetTenantId() string {
+	if x != nil {
+		return x.TenantId
+	}
+	return ""
+}
+
 type LoginUserResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Message       string                 `protobuf:"bytes,1,opt,name=message,proto3" json:"message,omitempty"`
 	Success       bool                   `protobuf:"varint,2,opt,name=success,proto3" json:"success,omitempty"`
+	AccessToken   string                 `protobuf:"bytes,3,opt,name=access_token,json=accessToken,proto3" json:"access_token,omitempty"`
+	RefreshToken  string                 `protobuf:"bytes,4,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -437,10 +495,25 @@ func (x *LoginUserResponse) GetSuccess() bool {
 	return false
 }
 
+func (x *LoginUserResponse) GetAccessToken() string {
+	if x != nil {
+		return x.AccessToken
+	}
+	return ""
+}
+
+func (x *LoginUserResponse) GetRefreshToken() string {
+	if x != nil {
+		return x.RefreshToken
+	}
+	return ""
+}
+
 type RequestPasswordChangeRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Email         string                 `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
 	Password      string                 `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
+	TenantId      string                 `protobuf:"bytes,3,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -485,6 +558,13 @@ func (x *RequestPasswordChangeRequest) GetEmail() string {
 func (x *RequestPasswordChangeRequest) GetPassword() string {
 	if x != nil {
 		return x.Password
+	}
+	return ""
+}
+
+func (x *RequestPasswordChangeRequest) GetTenantId() string {
+	if x != nil {
+		return x.TenantId
 	}
 	return ""
 }
@@ -545,6 +625,7 @@ type LogoutUserRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Email         string                 `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
 	Password      string                 `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
+	TenantId      string                 `protobuf:"bytes,3,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -589,6 +670,13 @@ func (x *LogoutUserRequest) GetEmail() string {
 func (x *LogoutUserRequest) GetPassword() string {
 	if x != nil {
 		return x.Password
+	}
+	return ""
+}
+
+func (x *LogoutUserRequest) GetTenantId() string {
+	if x != nil {
+		return x.TenantId
 	}
 	return ""
 }
@@ -702,6 +790,7 @@ type ChangePasswordRequest struct {
 	Email         string                 `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
 	OldPassword   string                 `protobuf:"bytes,2,opt,name=old_password,json=oldPassword,proto3" json:"old_password,omitempty"`
 	NewPassword   string                 `protobuf:"bytes,3,opt,name=new_password,json=newPassword,proto3" json:"new_password,omitempty"`
+	TenantId      string                 `protobuf:"bytes,4,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -753,6 +842,13 @@ func (x *ChangePasswordRequest) GetOldPassword() string {
 func (x *ChangePasswordRequest) GetNewPassword() string {
 	if x != nil {
 		return x.NewPassword
+	}
+	return ""
+}
+
+func (x *ChangePasswordRequest) GetTenantId() string {
+	if x != nil {
+		return x.TenantId
 	}
 	return ""
 }
@@ -897,51 +993,64 @@ var File_protos_auth_proto protoreflect.FileDescriptor
 
 const file_protos_auth_proto_rawDesc = "" +
 	"\n" +
-	"\x11protos/auth.proto\x12\x04auth\x1a\x12protos/types.proto\"\x89\x01\n" +
+	"\x11protos/auth.proto\x12\x04auth\x1a\x12protos/types.proto\"\xe5\x01\n" +
 	"\x13RegisterUserRequest\x12\x14\n" +
 	"\x05email\x18\x01 \x01(\tR\x05email\x12\x1a\n" +
 	"\bpassword\x18\x02 \x01(\tR\bpassword\x12\x19\n" +
-	"\x05phone\x18\x03 \x01(\tH\x00R\x05phone\x88\x01\x01\x12\x1b\n" +
-	"\tfull_name\x18\x04 \x01(\tR\bfullNameB\b\n" +
-	"\x06_phone\"7\n" +
+	"\x05phone\x18\x03 \x01(\tH\x00R\x05phone\x88\x01\x01\x12\x1d\n" +
+	"\n" +
+	"first_name\x18\x04 \x01(\tR\tfirstName\x12\x1b\n" +
+	"\tlast_name\x18\x05 \x01(\tR\blastName\x12;\n" +
+	"\x0etenant_context\x18\x06 \x01(\v2\x14.types.TenantContextR\rtenantContextB\b\n" +
+	"\x06_phone\"k\n" +
 	"\x14RegisterUserResponse\x12\x1f\n" +
-	"\x04user\x18\x01 \x01(\v2\v.types.UserR\x04user\"-\n" +
+	"\x04user\x18\x01 \x01(\v2\v.types.UserR\x04user\x12\x18\n" +
+	"\asuccess\x18\x02 \x01(\bR\asuccess\x12\x18\n" +
+	"\amessage\x18\x03 \x01(\tR\amessage\"j\n" +
 	"\x15ForgotPasswordRequest\x12\x14\n" +
-	"\x05email\x18\x01 \x01(\tR\x05email\"H\n" +
+	"\x05email\x18\x01 \x01(\tR\x05email\x12;\n" +
+	"\x0etenant_context\x18\x02 \x01(\v2\x14.types.TenantContextR\rtenantContext\"H\n" +
 	"\x16ForgotPasswordResponse\x12\x14\n" +
 	"\x05token\x18\x01 \x01(\tR\x05token\x12\x18\n" +
-	"\asuccess\x18\x02 \x01(\bR\asuccess\"4\n" +
+	"\asuccess\x18\x02 \x01(\bR\asuccess\"q\n" +
 	"\x1cValidatePasswordTokenRequest\x12\x14\n" +
-	"\x05token\x18\x01 \x01(\tR\x05token\"n\n" +
+	"\x05token\x18\x01 \x01(\tR\x05token\x12;\n" +
+	"\x0etenant_context\x18\x02 \x01(\v2\x14.types.TenantContextR\rtenantContext\"n\n" +
 	"\x1dValidatePasswordTokenResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
 	"\amessage\x18\x02 \x01(\tR\amessage\x12\x19\n" +
-	"\btoken_id\x18\x03 \x01(\tR\atokenId\"D\n" +
+	"\btoken_id\x18\x03 \x01(\tR\atokenId\"a\n" +
 	"\x10LoginUserRequest\x12\x14\n" +
 	"\x05email\x18\x01 \x01(\tR\x05email\x12\x1a\n" +
-	"\bpassword\x18\x02 \x01(\tR\bpassword\"G\n" +
+	"\bpassword\x18\x02 \x01(\tR\bpassword\x12\x1b\n" +
+	"\ttenant_id\x18\x03 \x01(\tR\btenantId\"\x8f\x01\n" +
 	"\x11LoginUserResponse\x12\x18\n" +
 	"\amessage\x18\x01 \x01(\tR\amessage\x12\x18\n" +
-	"\asuccess\x18\x02 \x01(\bR\asuccess\"P\n" +
+	"\asuccess\x18\x02 \x01(\bR\asuccess\x12!\n" +
+	"\faccess_token\x18\x03 \x01(\tR\vaccessToken\x12#\n" +
+	"\rrefresh_token\x18\x04 \x01(\tR\frefreshToken\"m\n" +
 	"\x1cRequestPasswordChangeRequest\x12\x14\n" +
 	"\x05email\x18\x01 \x01(\tR\x05email\x12\x1a\n" +
-	"\bpassword\x18\x02 \x01(\tR\bpassword\"S\n" +
+	"\bpassword\x18\x02 \x01(\tR\bpassword\x12\x1b\n" +
+	"\ttenant_id\x18\x03 \x01(\tR\btenantId\"S\n" +
 	"\x1dRequestPasswordChangeResponse\x12\x18\n" +
 	"\amessage\x18\x01 \x01(\tR\amessage\x12\x18\n" +
-	"\asuccess\x18\x02 \x01(\bR\asuccess\"E\n" +
+	"\asuccess\x18\x02 \x01(\bR\asuccess\"b\n" +
 	"\x11LogoutUserRequest\x12\x14\n" +
 	"\x05email\x18\x01 \x01(\tR\x05email\x12\x1a\n" +
-	"\bpassword\x18\x02 \x01(\tR\bpassword\"H\n" +
+	"\bpassword\x18\x02 \x01(\tR\bpassword\x12\x1b\n" +
+	"\ttenant_id\x18\x03 \x01(\tR\btenantId\"H\n" +
 	"\x12LogoutUserResponse\x12\x18\n" +
 	"\amessage\x18\x01 \x01(\tR\amessage\x12\x18\n" +
 	"\asuccess\x18\x02 \x01(\bR\asuccess\"L\n" +
 	"\x16ChangePasswordResponse\x12\x18\n" +
 	"\amessage\x18\x01 \x01(\tR\amessage\x12\x18\n" +
-	"\asuccess\x18\x02 \x01(\bR\asuccess\"s\n" +
+	"\asuccess\x18\x02 \x01(\bR\asuccess\"\x90\x01\n" +
 	"\x15ChangePasswordRequest\x12\x14\n" +
 	"\x05email\x18\x01 \x01(\tR\x05email\x12!\n" +
 	"\fold_password\x18\x02 \x01(\tR\voldPassword\x12!\n" +
-	"\fnew_password\x18\x03 \x01(\tR\vnewPassword\"h\n" +
+	"\fnew_password\x18\x03 \x01(\tR\vnewPassword\x12\x1b\n" +
+	"\ttenant_id\x18\x04 \x01(\tR\btenantId\"h\n" +
 	"\x17AuthenticateUserRequest\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\tR\btenantId\x12\x14\n" +
 	"\x05email\x18\x02 \x01(\tR\x05email\x12\x1a\n" +
@@ -993,32 +1102,36 @@ var file_protos_auth_proto_goTypes = []any{
 	(*ChangePasswordRequest)(nil),         // 13: auth.ChangePasswordRequest
 	(*AuthenticateUserRequest)(nil),       // 14: auth.AuthenticateUserRequest
 	(*AuthenticateUserResponse)(nil),      // 15: auth.AuthenticateUserResponse
-	(*User)(nil),                          // 16: types.User
+	(*TenantContext)(nil),                 // 16: types.TenantContext
+	(*User)(nil),                          // 17: types.User
 }
 var file_protos_auth_proto_depIdxs = []int32{
-	16, // 0: auth.RegisterUserResponse.user:type_name -> types.User
-	16, // 1: auth.AuthenticateUserResponse.user:type_name -> types.User
-	0,  // 2: auth.AuthService.RegisterUser:input_type -> auth.RegisterUserRequest
-	6,  // 3: auth.AuthService.LoginUser:input_type -> auth.LoginUserRequest
-	2,  // 4: auth.AuthService.ForgotPassword:input_type -> auth.ForgotPasswordRequest
-	4,  // 5: auth.AuthService.ValidatePasswordToken:input_type -> auth.ValidatePasswordTokenRequest
-	14, // 6: auth.AuthService.AuthenticateUser:input_type -> auth.AuthenticateUserRequest
-	8,  // 7: auth.AuthService.RequestPasswordChange:input_type -> auth.RequestPasswordChangeRequest
-	13, // 8: auth.AuthService.ChangePassword:input_type -> auth.ChangePasswordRequest
-	10, // 9: auth.AuthService.LogoutUser:input_type -> auth.LogoutUserRequest
-	1,  // 10: auth.AuthService.RegisterUser:output_type -> auth.RegisterUserResponse
-	7,  // 11: auth.AuthService.LoginUser:output_type -> auth.LoginUserResponse
-	3,  // 12: auth.AuthService.ForgotPassword:output_type -> auth.ForgotPasswordResponse
-	5,  // 13: auth.AuthService.ValidatePasswordToken:output_type -> auth.ValidatePasswordTokenResponse
-	15, // 14: auth.AuthService.AuthenticateUser:output_type -> auth.AuthenticateUserResponse
-	9,  // 15: auth.AuthService.RequestPasswordChange:output_type -> auth.RequestPasswordChangeResponse
-	12, // 16: auth.AuthService.ChangePassword:output_type -> auth.ChangePasswordResponse
-	11, // 17: auth.AuthService.LogoutUser:output_type -> auth.LogoutUserResponse
-	10, // [10:18] is the sub-list for method output_type
-	2,  // [2:10] is the sub-list for method input_type
-	2,  // [2:2] is the sub-list for extension type_name
-	2,  // [2:2] is the sub-list for extension extendee
-	0,  // [0:2] is the sub-list for field type_name
+	16, // 0: auth.RegisterUserRequest.tenant_context:type_name -> types.TenantContext
+	17, // 1: auth.RegisterUserResponse.user:type_name -> types.User
+	16, // 2: auth.ForgotPasswordRequest.tenant_context:type_name -> types.TenantContext
+	16, // 3: auth.ValidatePasswordTokenRequest.tenant_context:type_name -> types.TenantContext
+	17, // 4: auth.AuthenticateUserResponse.user:type_name -> types.User
+	0,  // 5: auth.AuthService.RegisterUser:input_type -> auth.RegisterUserRequest
+	6,  // 6: auth.AuthService.LoginUser:input_type -> auth.LoginUserRequest
+	2,  // 7: auth.AuthService.ForgotPassword:input_type -> auth.ForgotPasswordRequest
+	4,  // 8: auth.AuthService.ValidatePasswordToken:input_type -> auth.ValidatePasswordTokenRequest
+	14, // 9: auth.AuthService.AuthenticateUser:input_type -> auth.AuthenticateUserRequest
+	8,  // 10: auth.AuthService.RequestPasswordChange:input_type -> auth.RequestPasswordChangeRequest
+	13, // 11: auth.AuthService.ChangePassword:input_type -> auth.ChangePasswordRequest
+	10, // 12: auth.AuthService.LogoutUser:input_type -> auth.LogoutUserRequest
+	1,  // 13: auth.AuthService.RegisterUser:output_type -> auth.RegisterUserResponse
+	7,  // 14: auth.AuthService.LoginUser:output_type -> auth.LoginUserResponse
+	3,  // 15: auth.AuthService.ForgotPassword:output_type -> auth.ForgotPasswordResponse
+	5,  // 16: auth.AuthService.ValidatePasswordToken:output_type -> auth.ValidatePasswordTokenResponse
+	15, // 17: auth.AuthService.AuthenticateUser:output_type -> auth.AuthenticateUserResponse
+	9,  // 18: auth.AuthService.RequestPasswordChange:output_type -> auth.RequestPasswordChangeResponse
+	12, // 19: auth.AuthService.ChangePassword:output_type -> auth.ChangePasswordResponse
+	11, // 20: auth.AuthService.LogoutUser:output_type -> auth.LogoutUserResponse
+	13, // [13:21] is the sub-list for method output_type
+	5,  // [5:13] is the sub-list for method input_type
+	5,  // [5:5] is the sub-list for extension type_name
+	5,  // [5:5] is the sub-list for extension extendee
+	0,  // [0:5] is the sub-list for field type_name
 }
 
 func init() { file_protos_auth_proto_init() }

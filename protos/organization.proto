@@ -17,17 +17,6 @@ service OrganizationService {
   rpc GetUserOrganizations(GetUserOrganizationsRequest) returns (GetUserOrganizationsResponse);
 }
 
-// message Organization {
-//   string organization_id = 1;
-//   string tenant_id = 2;
-//   string name = 3;
-//   string description = 4;
-//   types.Status status = 5;
-//   OrganizationSettings settings = 6;
-//   google.protobuf.Timestamp created_at = 7;
-//   google.protobuf.Timestamp updated_at = 8;
-// }
-
 message OrganizationSettings {
   bool allow_multi_membership = 1;
   map<string, string> custom_settings = 2;

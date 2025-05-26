@@ -1,21 +1,58 @@
 syntax = "proto3";
 
 package types;
+
 option go_package = "github.com/mainheartng/marketa_api/protos;protos";
 
+import "google/protobuf/timestamp.proto";
 
 message User {
-  string id = 1;
-  string email = 2;
-  string password = 3;
-  string phone = 4;
-  string full_name = 5;
-  string created_at = 6;
-  string updated_at = 7;
+  string user_id = 1;
+  string tenant_id = 2;
+  string email = 3;
+  string username = 4;
+  string first_name = 5;
+  string last_name = 6;
+  types.Status status = 7;
+  repeated UserRole roles = 8;
+  UserProfile profile = 9;
+  google.protobuf.Timestamp created_at = 10;
+  google.protobuf.Timestamp updated_at = 11;
+}
+
+message UserRole {
+  string organization_id = 1;
+  string role_name = 2;
+  repeated string permissions = 3;
+}
+
+message UserProfile {
+  string phone = 1;
+  types.Address address = 2;
+  map<string, string> custom_fields = 3;
 }
 
 enum OrganizationType {
   business_name = 0;
+}
+
+message Organization {
+  string organization_id = 1;
+  string tenant_id = 2;
+  string name = 3;
+  string description = 4;
+  types.Status status = 5;
+  OrganizationSettings settings = 6;
+  OrganizationType type = 7;
+  repeated Staff staff = 8;
+  repeated Project projects = 9;
+  google.protobuf.Timestamp created_at = 10;
+  google.protobuf.Timestamp updated_at = 11;
+}
+
+message OrganizationSettings {
+  bool allow_multi_membership = 1;
+  map<string, string> custom_settings = 2;
 }
 
 enum AdminLevel {
@@ -56,14 +93,6 @@ message Staff {
   InviteStatus invite = 7;
   string organization_id = 8;
   Organization organization = 9;
-}
-
-message Organization {
-  string id = 1;
-  string name = 2;
-  OrganizationType type = 3;
-  repeated Staff staff = 4;
-  repeated Project projects = 5;
 }
 
 message Project {
