@@ -621,6 +621,7 @@ func (x *RequestPasswordChangeResponse) GetSuccess() bool {
 	return false
 }
 
+// TODO: change this to auth token
 type LogoutUserRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Email         string                 `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`

@@ -713,7 +713,6 @@ type Staff struct {
 	Status         Status                 `protobuf:"varint,6,opt,name=status,proto3,enum=types.Status" json:"status,omitempty"`
 	Invite         InviteStatus           `protobuf:"varint,7,opt,name=invite,proto3,enum=types.InviteStatus" json:"invite,omitempty"`
 	OrganizationId string                 `protobuf:"bytes,8,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	Organization   *Organization          `protobuf:"bytes,9,opt,name=organization,proto3" json:"organization,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -804,9 +803,46 @@ func (x *Staff) GetOrganizationId() string {
 	return ""
 }
 
-func (x *Staff) GetOrganization() *Organization {
+type ProjectSettings struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	CustomSettings map[string]string      `protobuf:"bytes,1,rep,name=custom_settings,json=customSettings,proto3" json:"custom_settings,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *ProjectSettings) Reset() {
+	*x = ProjectSettings{}
+	mi := &file_protos_types_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ProjectSettings) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ProjectSettings) ProtoMessage() {}
+
+func (x *ProjectSettings) ProtoReflect() protoreflect.Message {
+	mi := &file_protos_types_proto_msgTypes[6]
 	if x != nil {
-		return x.Organization
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ProjectSettings.ProtoReflect.Descriptor instead.
+func (*ProjectSettings) Descriptor() ([]byte, []int) {
+	return file_protos_types_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *ProjectSettings) GetCustomSettings() map[string]string {
+	if x != nil {
+		return x.CustomSettings
 	}
 	return nil
 }
@@ -814,18 +850,21 @@ func (x *Staff) GetOrganization() *Organization {
 type Project struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	CreatedAt     string                 `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt     string                 `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
-	Name          string                 `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
-	Status        Status                 `protobuf:"varint,5,opt,name=status,proto3,enum=types.Status" json:"status,omitempty"`
+	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Status        Status                 `protobuf:"varint,3,opt,name=status,proto3,enum=types.Status" json:"status,omitempty"`
+	Description   string                 `protobuf:"bytes,4,opt,name=description,proto3" json:"description,omitempty"`
+	Type          string                 `protobuf:"bytes,5,opt,name=type,proto3" json:"type,omitempty"`
 	Integrations  []*ProjectIntegrations `protobuf:"bytes,6,rep,name=integrations,proto3" json:"integrations,omitempty"`
+	Settings      *ProjectSettings       `protobuf:"bytes,7,opt,name=settings,proto3" json:"settings,omitempty"`
+	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *Project) Reset() {
 	*x = Project{}
-	mi := &file_protos_types_proto_msgTypes[6]
+	mi := &file_protos_types_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -837,7 +876,7 @@ func (x *Project) String() string {
 func (*Project) ProtoMessage() {}
 
 func (x *Project) ProtoReflect() protoreflect.Message {
-	mi := &file_protos_types_proto_msgTypes[6]
+	mi := &file_protos_types_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -850,26 +889,12 @@ func (x *Project) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Project.ProtoReflect.Descriptor instead.
 func (*Project) Descriptor() ([]byte, []int) {
-	return file_protos_types_proto_rawDescGZIP(), []int{6}
+	return file_protos_types_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *Project) GetId() string {
 	if x != nil {
 		return x.Id
-	}
-	return ""
-}
-
-func (x *Project) GetCreatedAt() string {
-	if x != nil {
-		return x.CreatedAt
-	}
-	return ""
-}
-
-func (x *Project) GetUpdatedAt() string {
-	if x != nil {
-		return x.UpdatedAt
 	}
 	return ""
 }
@@ -888,9 +913,44 @@ func (x *Project) GetStatus() Status {
 	return Status_STATUS_UNSPECIFIED
 }
 
+func (x *Project) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
+func (x *Project) GetType() string {
+	if x != nil {
+		return x.Type
+	}
+	return ""
+}
+
 func (x *Project) GetIntegrations() []*ProjectIntegrations {
 	if x != nil {
 		return x.Integrations
+	}
+	return nil
+}
+
+func (x *Project) GetSettings() *ProjectSettings {
+	if x != nil {
+		return x.Settings
+	}
+	return nil
+}
+
+func (x *Project) GetCreatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+func (x *Project) GetUpdatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.UpdatedAt
 	}
 	return nil
 }
@@ -907,7 +967,7 @@ type Integrations struct {
 
 func (x *Integrations) Reset() {
 	*x = Integrations{}
-	mi := &file_protos_types_proto_msgTypes[7]
+	mi := &file_protos_types_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -919,7 +979,7 @@ func (x *Integrations) String() string {
 func (*Integrations) ProtoMessage() {}
 
 func (x *Integrations) ProtoReflect() protoreflect.Message {
-	mi := &file_protos_types_proto_msgTypes[7]
+	mi := &file_protos_types_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -932,7 +992,7 @@ func (x *Integrations) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Integrations.ProtoReflect.Descriptor instead.
 func (*Integrations) Descriptor() ([]byte, []int) {
-	return file_protos_types_proto_rawDescGZIP(), []int{7}
+	return file_protos_types_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *Integrations) GetId() string {
@@ -977,7 +1037,7 @@ type ProjectIntegrations struct {
 
 func (x *ProjectIntegrations) Reset() {
 	*x = ProjectIntegrations{}
-	mi := &file_protos_types_proto_msgTypes[8]
+	mi := &file_protos_types_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -989,7 +1049,7 @@ func (x *ProjectIntegrations) String() string {
 func (*ProjectIntegrations) ProtoMessage() {}
 
 func (x *ProjectIntegrations) ProtoReflect() protoreflect.Message {
-	mi := &file_protos_types_proto_msgTypes[8]
+	mi := &file_protos_types_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1002,7 +1062,7 @@ func (x *ProjectIntegrations) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ProjectIntegrations.ProtoReflect.Descriptor instead.
 func (*ProjectIntegrations) Descriptor() ([]byte, []int) {
-	return file_protos_types_proto_rawDescGZIP(), []int{8}
+	return file_protos_types_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *ProjectIntegrations) GetId() string {
@@ -1053,15 +1113,16 @@ type TenantContext struct {
 	TenantId       string                 `protobuf:"bytes,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	OrganizationId string                 `protobuf:"bytes,2,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
 	UserId         string                 `protobuf:"bytes,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	UserRoles      []string               `protobuf:"bytes,4,rep,name=user_roles,json=userRoles,proto3" json:"user_roles,omitempty"`
-	Metadata       map[string]string      `protobuf:"bytes,5,rep,name=metadata,proto3" json:"metadata,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	ProjectId      string                 `protobuf:"bytes,4,opt,name=project_id,json=projectId,proto3" json:"project_id,omitempty"`
+	UserRoles      []string               `protobuf:"bytes,5,rep,name=user_roles,json=userRoles,proto3" json:"user_roles,omitempty"`
+	Metadata       map[string]string      `protobuf:"bytes,6,rep,name=metadata,proto3" json:"metadata,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
 
 func (x *TenantContext) Reset() {
 	*x = TenantContext{}
-	mi := &file_protos_types_proto_msgTypes[9]
+	mi := &file_protos_types_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1073,7 +1134,7 @@ func (x *TenantContext) String() string {
 func (*TenantContext) ProtoMessage() {}
 
 func (x *TenantContext) ProtoReflect() protoreflect.Message {
-	mi := &file_protos_types_proto_msgTypes[9]
+	mi := &file_protos_types_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1086,7 +1147,7 @@ func (x *TenantContext) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TenantContext.ProtoReflect.Descriptor instead.
 func (*TenantContext) Descriptor() ([]byte, []int) {
-	return file_protos_types_proto_rawDescGZIP(), []int{9}
+	return file_protos_types_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *TenantContext) GetTenantId() string {
@@ -1106,6 +1167,13 @@ func (x *TenantContext) GetOrganizationId() string {
 func (x *TenantContext) GetUserId() string {
 	if x != nil {
 		return x.UserId
+	}
+	return ""
+}
+
+func (x *TenantContext) GetProjectId() string {
+	if x != nil {
+		return x.ProjectId
 	}
 	return ""
 }
@@ -1137,7 +1205,7 @@ type PageRequest struct {
 
 func (x *PageRequest) Reset() {
 	*x = PageRequest{}
-	mi := &file_protos_types_proto_msgTypes[10]
+	mi := &file_protos_types_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1149,7 +1217,7 @@ func (x *PageRequest) String() string {
 func (*PageRequest) ProtoMessage() {}
 
 func (x *PageRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_protos_types_proto_msgTypes[10]
+	mi := &file_protos_types_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1162,7 +1230,7 @@ func (x *PageRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PageRequest.ProtoReflect.Descriptor instead.
 func (*PageRequest) Descriptor() ([]byte, []int) {
-	return file_protos_types_proto_rawDescGZIP(), []int{10}
+	return file_protos_types_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *PageRequest) GetPage() int32 {
@@ -1205,7 +1273,7 @@ type PageResponse struct {
 
 func (x *PageResponse) Reset() {
 	*x = PageResponse{}
-	mi := &file_protos_types_proto_msgTypes[11]
+	mi := &file_protos_types_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1217,7 +1285,7 @@ func (x *PageResponse) String() string {
 func (*PageResponse) ProtoMessage() {}
 
 func (x *PageResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_protos_types_proto_msgTypes[11]
+	mi := &file_protos_types_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1230,7 +1298,7 @@ func (x *PageResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PageResponse.ProtoReflect.Descriptor instead.
 func (*PageResponse) Descriptor() ([]byte, []int) {
-	return file_protos_types_proto_rawDescGZIP(), []int{11}
+	return file_protos_types_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *PageResponse) GetTotalCount() int32 {
@@ -1280,7 +1348,7 @@ type Address struct {
 
 func (x *Address) Reset() {
 	*x = Address{}
-	mi := &file_protos_types_proto_msgTypes[12]
+	mi := &file_protos_types_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1292,7 +1360,7 @@ func (x *Address) String() string {
 func (*Address) ProtoMessage() {}
 
 func (x *Address) ProtoReflect() protoreflect.Message {
-	mi := &file_protos_types_proto_msgTypes[12]
+	mi := &file_protos_types_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1305,7 +1373,7 @@ func (x *Address) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Address.ProtoReflect.Descriptor instead.
 func (*Address) Descriptor() ([]byte, []int) {
-	return file_protos_types_proto_rawDescGZIP(), []int{12}
+	return file_protos_types_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *Address) GetAddressId() string {
@@ -1437,7 +1505,7 @@ const file_protos_types_proto_rawDesc = "" +
 	"\x0fcustom_settings\x18\x02 \x03(\v2/.types.OrganizationSettings.CustomSettingsEntryR\x0ecustomSettings\x1aA\n" +
 	"\x13CustomSettingsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xcc\x02\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\x93\x02\n" +
 	"\x05Staff\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\tR\x06userId\x12\x1f\n" +
@@ -1446,17 +1514,24 @@ const file_protos_types_proto_rawDesc = "" +
 	"\x05level\x18\x05 \x01(\x0e2\x11.types.AdminLevelR\x05level\x12%\n" +
 	"\x06status\x18\x06 \x01(\x0e2\r.types.StatusR\x06status\x12+\n" +
 	"\x06invite\x18\a \x01(\x0e2\x13.types.InviteStatusR\x06invite\x12'\n" +
-	"\x0forganization_id\x18\b \x01(\tR\x0eorganizationId\x127\n" +
-	"\forganization\x18\t \x01(\v2\x13.types.OrganizationR\forganization\"\xd2\x01\n" +
+	"\x0forganization_id\x18\b \x01(\tR\x0eorganizationId\"\xa9\x01\n" +
+	"\x0fProjectSettings\x12S\n" +
+	"\x0fcustom_settings\x18\x01 \x03(\v2*.types.ProjectSettings.CustomSettingsEntryR\x0ecustomSettings\x1aA\n" +
+	"\x13CustomSettingsEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xf4\x02\n" +
 	"\aProject\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1d\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\x12%\n" +
+	"\x06status\x18\x03 \x01(\x0e2\r.types.StatusR\x06status\x12 \n" +
+	"\vdescription\x18\x04 \x01(\tR\vdescription\x12\x12\n" +
+	"\x04type\x18\x05 \x01(\tR\x04type\x12>\n" +
+	"\fintegrations\x18\x06 \x03(\v2\x1a.types.ProjectIntegrationsR\fintegrations\x122\n" +
+	"\bsettings\x18\a \x01(\v2\x16.types.ProjectSettingsR\bsettings\x129\n" +
 	"\n" +
-	"created_at\x18\x02 \x01(\tR\tcreatedAt\x12\x1d\n" +
+	"created_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"updated_at\x18\x03 \x01(\tR\tupdatedAt\x12\x12\n" +
-	"\x04name\x18\x04 \x01(\tR\x04name\x12%\n" +
-	"\x06status\x18\x05 \x01(\x0e2\r.types.StatusR\x06status\x12>\n" +
-	"\fintegrations\x18\x06 \x03(\v2\x1a.types.ProjectIntegrationsR\fintegrations\"\xa0\x01\n" +
+	"updated_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\xa0\x01\n" +
 	"\fIntegrations\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1d\n" +
 	"\n" +
@@ -1472,14 +1547,16 @@ const file_protos_types_proto_rawDesc = "" +
 	"project_id\x18\x03 \x01(\tR\tprojectId\x12(\n" +
 	"\aproject\x18\x04 \x01(\v2\x0e.types.ProjectR\aproject\x12'\n" +
 	"\x0fintegrations_id\x18\x05 \x01(\tR\x0eintegrationsId\x127\n" +
-	"\fintegrations\x18\x06 \x01(\v2\x13.types.IntegrationsR\fintegrations\"\x8a\x02\n" +
+	"\fintegrations\x18\x06 \x01(\v2\x13.types.IntegrationsR\fintegrations\"\xa9\x02\n" +
 	"\rTenantContext\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\tR\btenantId\x12'\n" +
 	"\x0forganization_id\x18\x02 \x01(\tR\x0eorganizationId\x12\x17\n" +
 	"\auser_id\x18\x03 \x01(\tR\x06userId\x12\x1d\n" +
 	"\n" +
-	"user_roles\x18\x04 \x03(\tR\tuserRoles\x12>\n" +
-	"\bmetadata\x18\x05 \x03(\v2\".types.TenantContext.MetadataEntryR\bmetadata\x1a;\n" +
+	"project_id\x18\x04 \x01(\tR\tprojectId\x12\x1d\n" +
+	"\n" +
+	"user_roles\x18\x05 \x03(\tR\tuserRoles\x12>\n" +
+	"\bmetadata\x18\x06 \x03(\v2\".types.TenantContext.MetadataEntryR\bmetadata\x1a;\n" +
 	"\rMetadataEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"v\n" +
@@ -1552,7 +1629,7 @@ func file_protos_types_proto_rawDescGZIP() []byte {
 }
 
 var file_protos_types_proto_enumTypes = make([]protoimpl.EnumInfo, 5)
-var file_protos_types_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
+var file_protos_types_proto_msgTypes = make([]protoimpl.MessageInfo, 18)
 var file_protos_types_proto_goTypes = []any{
 	(OrganizationType)(0),         // 0: types.OrganizationType
 	(AdminLevel)(0),               // 1: types.AdminLevel
@@ -1565,50 +1642,55 @@ var file_protos_types_proto_goTypes = []any{
 	(*Organization)(nil),          // 8: types.Organization
 	(*OrganizationSettings)(nil),  // 9: types.OrganizationSettings
 	(*Staff)(nil),                 // 10: types.Staff
-	(*Project)(nil),               // 11: types.Project
-	(*Integrations)(nil),          // 12: types.Integrations
-	(*ProjectIntegrations)(nil),   // 13: types.ProjectIntegrations
-	(*TenantContext)(nil),         // 14: types.TenantContext
-	(*PageRequest)(nil),           // 15: types.PageRequest
-	(*PageResponse)(nil),          // 16: types.PageResponse
-	(*Address)(nil),               // 17: types.Address
-	nil,                           // 18: types.UserProfile.CustomFieldsEntry
-	nil,                           // 19: types.OrganizationSettings.CustomSettingsEntry
-	nil,                           // 20: types.TenantContext.MetadataEntry
-	(*timestamppb.Timestamp)(nil), // 21: google.protobuf.Timestamp
+	(*ProjectSettings)(nil),       // 11: types.ProjectSettings
+	(*Project)(nil),               // 12: types.Project
+	(*Integrations)(nil),          // 13: types.Integrations
+	(*ProjectIntegrations)(nil),   // 14: types.ProjectIntegrations
+	(*TenantContext)(nil),         // 15: types.TenantContext
+	(*PageRequest)(nil),           // 16: types.PageRequest
+	(*PageResponse)(nil),          // 17: types.PageResponse
+	(*Address)(nil),               // 18: types.Address
+	nil,                           // 19: types.UserProfile.CustomFieldsEntry
+	nil,                           // 20: types.OrganizationSettings.CustomSettingsEntry
+	nil,                           // 21: types.ProjectSettings.CustomSettingsEntry
+	nil,                           // 22: types.TenantContext.MetadataEntry
+	(*timestamppb.Timestamp)(nil), // 23: google.protobuf.Timestamp
 }
 var file_protos_types_proto_depIdxs = []int32{
 	4,  // 0: types.User.status:type_name -> types.Status
 	6,  // 1: types.User.roles:type_name -> types.UserRole
 	7,  // 2: types.User.profile:type_name -> types.UserProfile
-	21, // 3: types.User.created_at:type_name -> google.protobuf.Timestamp
-	21, // 4: types.User.updated_at:type_name -> google.protobuf.Timestamp
-	17, // 5: types.UserProfile.address:type_name -> types.Address
-	18, // 6: types.UserProfile.custom_fields:type_name -> types.UserProfile.CustomFieldsEntry
+	23, // 3: types.User.created_at:type_name -> google.protobuf.Timestamp
+	23, // 4: types.User.updated_at:type_name -> google.protobuf.Timestamp
+	18, // 5: types.UserProfile.address:type_name -> types.Address
+	19, // 6: types.UserProfile.custom_fields:type_name -> types.UserProfile.CustomFieldsEntry
 	4,  // 7: types.Organization.status:type_name -> types.Status
 	9,  // 8: types.Organization.settings:type_name -> types.OrganizationSettings
 	0,  // 9: types.Organization.type:type_name -> types.OrganizationType
 	10, // 10: types.Organization.staff:type_name -> types.Staff
-	11, // 11: types.Organization.projects:type_name -> types.Project
-	21, // 12: types.Organization.created_at:type_name -> google.protobuf.Timestamp
-	21, // 13: types.Organization.updated_at:type_name -> google.protobuf.Timestamp
-	19, // 14: types.OrganizationSettings.custom_settings:type_name -> types.OrganizationSettings.CustomSettingsEntry
+	12, // 11: types.Organization.projects:type_name -> types.Project
+	23, // 12: types.Organization.created_at:type_name -> google.protobuf.Timestamp
+	23, // 13: types.Organization.updated_at:type_name -> google.protobuf.Timestamp
+	20, // 14: types.OrganizationSettings.custom_settings:type_name -> types.OrganizationSettings.CustomSettingsEntry
 	5,  // 15: types.Staff.user:type_name -> types.User
 	1,  // 16: types.Staff.level:type_name -> types.AdminLevel
 	4,  // 17: types.Staff.status:type_name -> types.Status
 	2,  // 18: types.Staff.invite:type_name -> types.InviteStatus
-	8,  // 19: types.Staff.organization:type_name -> types.Organization
+	21, // 19: types.ProjectSettings.custom_settings:type_name -> types.ProjectSettings.CustomSettingsEntry
 	4,  // 20: types.Project.status:type_name -> types.Status
-	13, // 21: types.Project.integrations:type_name -> types.ProjectIntegrations
-	3,  // 22: types.Integrations.integration_type:type_name -> types.IntegrationTypes
-	11, // 23: types.ProjectIntegrations.project:type_name -> types.Project
-	12, // 24: types.ProjectIntegrations.integrations:type_name -> types.Integrations
-	20, // 25: types.TenantContext.metadata:type_name -> types.TenantContext.MetadataEntry
-	26, // [26:26] is the sub-list for method output_type
-	26, // [26:26] is the sub-list for method input_type
-	26, // [26:26] is the sub-list for extension type_name
-	26, // [26:26] is the sub-list for extension extendee
-	0,  // [0:26] is the sub-list for field type_name
+	14, // 21: types.Project.integrations:type_name -> types.ProjectIntegrations
+	11, // 22: types.Project.settings:type_name -> types.ProjectSettings
+	23, // 23: types.Project.created_at:type_name -> google.protobuf.Timestamp
+	23, // 24: types.Project.updated_at:type_name -> google.protobuf.Timestamp
+	3,  // 25: types.Integrations.integration_type:type_name -> types.IntegrationTypes
+	12, // 26: types.ProjectIntegrations.project:type_name -> types.Project
+	13, // 27: types.ProjectIntegrations.integrations:type_name -> types.Integrations
+	22, // 28: types.TenantContext.metadata:type_name -> types.TenantContext.MetadataEntry
+	29, // [29:29] is the sub-list for method output_type
+	29, // [29:29] is the sub-list for method input_type
+	29, // [29:29] is the sub-list for extension type_name
+	29, // [29:29] is the sub-list for extension extendee
+	0,  // [0:29] is the sub-list for field type_name
 }
 
 func init() { file_protos_types_proto_init() }
@@ -1622,7 +1704,7 @@ func file_protos_types_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_protos_types_proto_rawDesc), len(file_protos_types_proto_rawDesc)),
 			NumEnums:      5,
-			NumMessages:   16,
+			NumMessages:   18,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

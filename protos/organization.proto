@@ -17,17 +17,17 @@ service OrganizationService {
   rpc GetUserOrganizations(GetUserOrganizationsRequest) returns (GetUserOrganizationsResponse);
 }
 
-message OrganizationSettings {
-  bool allow_multi_membership = 1;
-  map<string, string> custom_settings = 2;
-}
+// message OrganizationSettings {
+//   bool allow_multi_membership = 1;
+//   map<string, string> custom_settings = 2;
+// }
 
 
 message CreateOrganizationRequest {
   types.TenantContext tenant_context = 1;
   string name = 2;
   string description = 3;
-  OrganizationSettings settings = 4;
+  types.OrganizationSettings settings = 4;
 }
 
 message CreateOrganizationResponse {
@@ -52,7 +52,7 @@ message UpdateOrganizationRequest {
   string organization_id = 2;
   string name = 3;
   string description = 4;
-  OrganizationSettings settings = 5;
+  types.OrganizationSettings settings = 5;
 }
 
 message UpdateOrganizationResponse {

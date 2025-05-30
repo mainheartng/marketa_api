@@ -1,0 +1,90 @@
+syntax = "proto3";
+
+package project;
+
+option go_package = "github.com/mainheartng/marketa_api/protos;protos";
+
+import "protos/types.proto";
+
+service ProjectService {
+  rpc CreateProject (CreateProjectRequest) returns (CreateProjectResponse);
+  rpc GetProject (GetProjectRequest) returns (GetProjectResponse);
+  rpc UpdateProject(UpdateProjectRequest) returns (UpdateProjectResponse);
+  rpc ListProjects (ListProjectsRequest) returns (ListProjectsResponse);
+  rpc PublishProject(PublishProjectRequest) returns (PublishProjectResponse);
+  rpc DeactivateProject(DeactivateProjectRequest) returns (DeactivateProjectResponse);
+}
+
+message CreateProjectRequest {
+  string project_id = 1;
+  string name = 2;
+  string description = 3;
+  types.ProjectSettings settings = 4;
+  types.TenantContext tenant_context = 5;
+}
+
+message CreateProjectResponse {
+  types.Project project = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message GetProjectRequest {
+  types.TenantContext tenant_context = 1;
+  string project_id = 2;
+}
+
+message GetProjectResponse {
+  types.Project project = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message UpdateProjectRequest {
+  types.TenantContext tenant_context = 1;
+  string project_id = 2;
+  string name = 3;
+  string description = 4;
+  types.ProjectSettings settings = 5;
+}
+
+message UpdateProjectResponse {
+  types.Project project = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message ListProjectsRequest {
+  types.TenantContext tenant_context = 1;
+  types.PageRequest pagination = 2;
+  string search_query = 3;
+  types.Status status_filter = 4;
+}
+
+message ListProjectsResponse {
+  repeated types.Project projects = 1;
+  types.PageResponse pagination = 2;
+  bool success = 3;
+  string message = 4;
+}
+
+message PublishProjectRequest {
+  types.TenantContext tenant_context = 1;
+  string project_id = 2;
+}
+
+message PublishProjectResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message DeactivateProjectRequest {
+  types.TenantContext tenant_context = 1;
+  string project_id = 2;
+  string reason = 3;
+}
+
+message DeactivateProjectResponse {
+  bool success = 1;
+  string message = 2;
+}
