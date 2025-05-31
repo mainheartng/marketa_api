@@ -200,7 +200,8 @@ func (x *GetUserByEmailResponse) GetUser() *User {
 type UpdateUserRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	FullName      string                 `protobuf:"bytes,2,opt,name=full_name,json=fullName,proto3" json:"full_name,omitempty"`
+	FirstName     string                 `protobuf:"bytes,2,opt,name=first_name,json=firstName,proto3" json:"first_name,omitempty"`
+	LastName      string                 `protobuf:"bytes,3,opt,name=last_name,json=lastName,proto3" json:"last_name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -242,9 +243,16 @@ func (x *UpdateUserRequest) GetUserId() string {
 	return ""
 }
 
-func (x *UpdateUserRequest) GetFullName() string {
+func (x *UpdateUserRequest) GetFirstName() string {
 	if x != nil {
-		return x.FullName
+		return x.FirstName
+	}
+	return ""
+}
+
+func (x *UpdateUserRequest) GetLastName() string {
+	if x != nil {
+		return x.LastName
 	}
 	return ""
 }
@@ -694,8 +702,9 @@ type AssignRoleRequest struct {
 	TenantContext  *TenantContext         `protobuf:"bytes,1,opt,name=tenant_context,json=tenantContext,proto3" json:"tenant_context,omitempty"`
 	UserId         string                 `protobuf:"bytes,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	OrganizationId string                 `protobuf:"bytes,3,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	RoleName       string                 `protobuf:"bytes,4,opt,name=role_name,json=roleName,proto3" json:"role_name,omitempty"`
-	Permissions    []string               `protobuf:"bytes,5,rep,name=permissions,proto3" json:"permissions,omitempty"`
+	ProjectId      string                 `protobuf:"bytes,4,opt,name=project_id,json=projectId,proto3" json:"project_id,omitempty"`
+	RoleName       string                 `protobuf:"bytes,5,opt,name=role_name,json=roleName,proto3" json:"role_name,omitempty"`
+	Permissions    []string               `protobuf:"bytes,6,rep,name=permissions,proto3" json:"permissions,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -747,6 +756,13 @@ func (x *AssignRoleRequest) GetUserId() string {
 func (x *AssignRoleRequest) GetOrganizationId() string {
 	if x != nil {
 		return x.OrganizationId
+	}
+	return ""
+}
+
+func (x *AssignRoleRequest) GetProjectId() string {
+	if x != nil {
+		return x.ProjectId
 	}
 	return ""
 }
@@ -822,7 +838,8 @@ type RevokeRoleRequest struct {
 	TenantContext  *TenantContext         `protobuf:"bytes,1,opt,name=tenant_context,json=tenantContext,proto3" json:"tenant_context,omitempty"`
 	UserId         string                 `protobuf:"bytes,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	OrganizationId string                 `protobuf:"bytes,3,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	RoleName       string                 `protobuf:"bytes,4,opt,name=role_name,json=roleName,proto3" json:"role_name,omitempty"`
+	ProjectId      string                 `protobuf:"bytes,4,opt,name=project_id,json=projectId,proto3" json:"project_id,omitempty"`
+	RoleName       string                 `protobuf:"bytes,5,opt,name=role_name,json=roleName,proto3" json:"role_name,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -874,6 +891,13 @@ func (x *RevokeRoleRequest) GetUserId() string {
 func (x *RevokeRoleRequest) GetOrganizationId() string {
 	if x != nil {
 		return x.OrganizationId
+	}
+	return ""
+}
+
+func (x *RevokeRoleRequest) GetProjectId() string {
+	if x != nil {
+		return x.ProjectId
 	}
 	return ""
 }
@@ -949,10 +973,12 @@ const file_protos_user_proto_rawDesc = "" +
 	"\x15GetUserByEmailRequest\x12\x14\n" +
 	"\x05email\x18\x01 \x01(\tR\x05email\"9\n" +
 	"\x16GetUserByEmailResponse\x12\x1f\n" +
-	"\x04user\x18\x01 \x01(\v2\v.types.UserR\x04user\"I\n" +
+	"\x04user\x18\x01 \x01(\v2\v.types.UserR\x04user\"h\n" +
 	"\x11UpdateUserRequest\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x1b\n" +
-	"\tfull_name\x18\x02 \x01(\tR\bfullName\"P\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x1d\n" +
+	"\n" +
+	"first_name\x18\x02 \x01(\tR\tfirstName\x12\x1b\n" +
+	"\tlast_name\x18\x03 \x01(\tR\blastName\"P\n" +
 	"\x19UpdateUserPasswordRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x1a\n" +
 	"\bpassword\x18\x02 \x01(\tR\bpassword\"W\n" +
@@ -983,21 +1009,25 @@ const file_protos_user_proto_rawDesc = "" +
 	"pagination\x18\x02 \x01(\v2\x13.types.PageResponseR\n" +
 	"pagination\x12\x18\n" +
 	"\asuccess\x18\x03 \x01(\bR\asuccess\x12\x18\n" +
-	"\amessage\x18\x04 \x01(\tR\amessage\"\xd1\x01\n" +
+	"\amessage\x18\x04 \x01(\tR\amessage\"\xf0\x01\n" +
 	"\x11AssignRoleRequest\x12;\n" +
 	"\x0etenant_context\x18\x01 \x01(\v2\x14.types.TenantContextR\rtenantContext\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\tR\x06userId\x12'\n" +
-	"\x0forganization_id\x18\x03 \x01(\tR\x0eorganizationId\x12\x1b\n" +
-	"\trole_name\x18\x04 \x01(\tR\broleName\x12 \n" +
-	"\vpermissions\x18\x05 \x03(\tR\vpermissions\"H\n" +
+	"\x0forganization_id\x18\x03 \x01(\tR\x0eorganizationId\x12\x1d\n" +
+	"\n" +
+	"project_id\x18\x04 \x01(\tR\tprojectId\x12\x1b\n" +
+	"\trole_name\x18\x05 \x01(\tR\broleName\x12 \n" +
+	"\vpermissions\x18\x06 \x03(\tR\vpermissions\"H\n" +
 	"\x12AssignRoleResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
-	"\amessage\x18\x02 \x01(\tR\amessage\"\xaf\x01\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"\xce\x01\n" +
 	"\x11RevokeRoleRequest\x12;\n" +
 	"\x0etenant_context\x18\x01 \x01(\v2\x14.types.TenantContextR\rtenantContext\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\tR\x06userId\x12'\n" +
-	"\x0forganization_id\x18\x03 \x01(\tR\x0eorganizationId\x12\x1b\n" +
-	"\trole_name\x18\x04 \x01(\tR\broleName\"H\n" +
+	"\x0forganization_id\x18\x03 \x01(\tR\x0eorganizationId\x12\x1d\n" +
+	"\n" +
+	"project_id\x18\x04 \x01(\tR\tprojectId\x12\x1b\n" +
+	"\trole_name\x18\x05 \x01(\tR\broleName\"H\n" +
 	"\x12RevokeRoleResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
 	"\amessage\x18\x02 \x01(\tR\amessage2\xb9\x04\n" +
